@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Sheet } from './Sheet'
 import { Button } from './ui'
 
@@ -77,6 +78,89 @@ export function WhenPicker({
         <Button onClick={onDismiss}>
           Set {day} · {time}
         </Button>
+      </div>
+    </Sheet>
+  )
+}
+
+/**
+ * Where the walk starts. A map, the device's own location as the first option,
+ * and typing as the fallback — in that order, because the common case is "here".
+ */
+export function LocationPicker({
+  value,
+  areas,
+  onPick,
+  onDismiss,
+}: {
+  value: string
+  areas: string[]
+  onPick: (v: string) => void
+  onDismiss: () => void
+}) {
+  const [query, setQuery] = useState('')
+  const [locating, setLocating] = useState(false)
+  const matches = areas.filter((a) => a.toLowerCase().includes(query.trim().toLowerCase()))
+
+  const useCurrent = () => {
+    setLocating(true)
+    window.setTimeout(() => {
+      setLocating(false)
+      onPick('Current location · Florentin')
+      onDismiss()
+    }, 700)
+  }
+
+  return (
+    <Sheet onDismiss={onDismiss}>
+      <div className="stack" style={{ gap: 4, paddingBottom: 12 }}>
+        <span className="t-heading-18">Where does the walk start?</span>
+        <span className="t-body-12 muted">The walker comes to you.</span>
+      </div>
+
+      <div className="map" aria-label="map">
+        <span className="map__pin" />
+      </div>
+
+      <button className="locate" onClick={useCurrent} disabled={locating}>
+        <span className="locate__dot" data-busy={locating || undefined} />
+        <span className="stack grow" style={{ gap: 1, textAlign: 'left' }}>
+          <span className="t-title-13">
+            {locating ? 'Finding you…' : 'Use my current location'}
+          </span>
+          <span className="t-body-11 muted">{locating ? 'One moment' : 'Florentin, Tel Aviv'}</span>
+        </span>
+      </button>
+
+      <input
+        className="t-body-13 search"
+        value={query}
+        placeholder="Or search a street or neighbourhood"
+        onChange={(e) => setQuery(e.target.value)}
+      />
+
+      <div className="stack" style={{ gap: 6, maxHeight: 148, overflowY: 'auto' }}>
+        {matches.length === 0 ? (
+          <span className="t-body-12 muted" style={{ padding: '10px 2px' }}>
+            Nothing here matches “{query.trim()}”.
+          </span>
+        ) : null}
+        {matches.map((a) => (
+          <button
+            key={a}
+            className="option"
+            aria-pressed={a === value}
+            onClick={() => {
+              onPick(a)
+              onDismiss()
+            }}
+          >
+            <span className="option__label t-title-14 grow">{a}</span>
+            <span className="option__mark">
+              {a === value ? <span className="t-title-12">✓</span> : null}
+            </span>
+          </button>
+        ))}
       </div>
     </Sheet>
   )

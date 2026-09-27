@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Screen } from '../components/Chrome'
-import { EditableField, Field, Segmented } from '../components/ui'
+import { Field, Segmented } from '../components/ui'
 import { WalkerCard } from '../components/WalkerCard'
 import { WALKERS } from '../data/walkers'
 import type { AppState } from '../state'
@@ -35,12 +35,7 @@ export function Home({ app }: { app: AppState }) {
             value={app.dogComplete ? app.dogName : 'Add Dog Details'}
             onClick={() => app.go('wizard')}
           />
-          <EditableField
-            label="Near"
-            value={app.form.near}
-            onChange={(v) => app.setField('near', v)}
-            placeholder="Neighbourhood or street"
-          />
+          <Field label="Near" value={app.form.near} onClick={() => app.openSheet('near')} />
           <Field
             label="When"
             value={mode === 'Now' ? 'As soon as possible' : app.whenLabel}

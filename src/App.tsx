@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import {
+  AREAS,
   DAYS,
   LENGTHS,
   ORDER,
@@ -16,7 +17,7 @@ import { Filters } from './screens/Filters'
 import { WalkerProfile } from './screens/WalkerProfile'
 import { BookWalker, PushAccepted, RequestSent } from './screens/Booking'
 import { Sheet } from './components/Sheet'
-import { ListPicker, WhenPicker } from './components/Picker'
+import { ListPicker, LocationPicker, WhenPicker } from './components/Picker'
 import { Button } from './components/ui'
 import './styles/app.css'
 
@@ -92,6 +93,14 @@ export default function App() {
               day={app.form.day}
               time={app.form.time}
               onChange={app.setWhen}
+              onDismiss={app.closeSheet}
+            />
+          ) : null}
+          {app.sheet === 'near' ? (
+            <LocationPicker
+              value={app.form.near}
+              areas={AREAS}
+              onPick={(v) => app.setField('near', v)}
               onDismiss={app.closeSheet}
             />
           ) : null}

@@ -17,10 +17,31 @@ const results = []
 const check = (name, pass, detail = '') => results.push({ name, pass, detail })
 const device = page.locator('.device')
 
-// 1 — the "Near" field takes typing
-const near = page.locator('.field input').first()
-await near.fill('Neve Tzedek, Tel Aviv')
-check('Near accepts typing', (await near.inputValue()) === 'Neve Tzedek, Tel Aviv')
+// 1 — "Near" opens a map picker, offers the current location, and takes a search
+await page.getByText('Near', { exact: true }).click()
+await page.waitForTimeout(500)
+check('Near opens a map picker', await page.locator('.map').isVisible())
+await device.screenshot({ path: `${OUT}/picker-near.png` })
+await page.locator('.search').fill('neve')
+await page.waitForTimeout(200)
+check('Search filters the areas', (await page.locator('.option').count()) === 1)
+await device.screenshot({ path: `${OUT}/picker-near-search.png` })
+await page.getByRole('button', { name: /Neve Tzedek/ }).click()
+await page.waitForTimeout(450)
+check(
+  'Area writes back to the field',
+  (await page.locator('.field', { hasText: 'Near' }).innerText()).includes('Neve Tzedek'),
+)
+
+// 1b — the current-location option
+await page.getByText('Near', { exact: true }).click()
+await page.waitForTimeout(450)
+await page.getByRole('button', { name: /Use my current location/ }).click()
+await page.waitForTimeout(1200)
+check(
+  'Current location writes back',
+  (await page.locator('.field', { hasText: 'Near' }).innerText()).includes('Current location'),
+)
 
 // 2 — "When" opens the day/time picker and the choice sticks
 await page.getByText('When', { exact: true }).click()

@@ -81,7 +81,7 @@ function transitionFor(from: Route, to: Route): Transition {
 }
 
 /** Which chooser is open over the current screen, if any. */
-export type SheetKind = 'when' | 'length' | 'sort' | null
+export type SheetKind = 'when' | 'length' | 'sort' | 'near' | null
 
 export type Form = {
   near: string
@@ -104,6 +104,14 @@ const DEFAULT_FORM: Form = {
 export const DAYS = ['Today', 'Tomorrow', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 export const TIMES = ['07:00', '08:00', '12:00', '16:00', '16:30', '17:00', '17:30', '18:00', '19:00']
 export const LENGTHS = ['30 min', '45 min', '60 min', 'Longer']
+export const AREAS = [
+  'Florentin, Tel Aviv',
+  'Neve Tzedek, Tel Aviv',
+  'Shapira, Tel Aviv',
+  'Kerem HaTeimanim, Tel Aviv',
+  'Jaffa, Tel Aviv',
+  'Rothschild, Tel Aviv',
+]
 export const SORTS = ['Best match', 'Nearest', 'Soonest', 'Price, low to high', 'Rating']
 
 export function useApp() {

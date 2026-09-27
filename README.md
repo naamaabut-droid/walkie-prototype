@@ -57,8 +57,10 @@ tools/shoot.mjs         screenshots every route headlessly — how this was chec
 
 Nothing here is a picture of a control.
 
-- **Typing** — `Near` on Home and `Pickup address` on Book are text inputs. So are the dog's name
-  and the free-text note in the wizard.
+- **`Near` opens a map**, with the device's own location as the first option and a search under it.
+  Tapping *Use my current location* shows a short locating state before it answers. Typing filters
+  the areas; nothing matching says so.
+- **Typing** — `Pickup address` on Book, the dog's name and the free-text note in the wizard.
 - **Pickers** — `When` opens a two-wheel day-and-time sheet that opens on the current value;
   `Walk length` and the sort control open a list sheet. Each writes back to the field, and the
   choice follows you: pick *Tomorrow · 18:00* on Home and the booking screen and the push both say so.
@@ -79,7 +81,7 @@ Two scripts, both against the running app:
   console errors.
 - `node tools/probe.mjs <dir>` — drives the actual controls and asserts the state changed: typing
   sticks, the picker writes back, the wizard reaches the summary, the sort changes, the heart
-  toggles, and the booking screen carries the chosen time. 9 checks, 0 console errors.
+  toggles, and the booking screen carries the chosen time. 12 checks, 0 console errors.
 
 Every screen was compared against its Figma frame in a render, not by reading the code.
 
