@@ -148,7 +148,8 @@ export const STEPS: Step[] = [
     title: 'Anything else a walker should know?',
     subtitle: 'Anything the questions did not cover.',
     placeholder: 'He needs water halfway. The gate sticks — lift it as you close it.',
-    skippable: true,
+    // the frame ends in Save alone — the label already says the note is optional
+    skippable: false,
   },
 ]
 

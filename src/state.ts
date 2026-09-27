@@ -81,7 +81,7 @@ function transitionFor(from: Route, to: Route): Transition {
 }
 
 /** Which chooser is open over the current screen, if any. */
-export type SheetKind = 'when' | 'length' | 'sort' | 'near' | 'address' | null
+export type SheetKind = 'when' | 'length' | 'sort' | 'near' | 'address' | 'dog' | null
 
 export type Form = {
   day: string
@@ -129,6 +129,14 @@ export const TIMES = ['07:00', '08:00', '12:00', '16:00', '16:30', '17:00', '17:
 export const LENGTHS = ['30 min', '45 min', '60 min', 'Longer']
 export const SORTS = ['Best match', 'Nearest', 'Soonest', 'Price, low to high', 'Rating']
 
+/** A saved dog profile. The questionnaire produces one of these; Home chooses between them. */
+export type Dog = {
+  id: string
+  name: string
+  photo: string | null
+  answers: Record<string, string | string[]>
+}
+
 export function useApp() {
   const [route, setRoute] = useState<Route>('home')
   const [transition, setTransition] = useState<Transition>('forward')
@@ -140,6 +148,10 @@ export function useApp() {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [saved, setSaved] = useState<string[]>([])
   const [photo, setPhotoUrl] = useState<string | null>(null)
+  const [dogs, setDogs] = useState<Dog[]>([])
+  const [activeDogId, setActiveDogId] = useState<string | null>(null)
+  /** the profile being filled in right now; null id means it is a new dog */
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [walkerId, setWalkerId] = useState('maya')
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
   const [frequency, setFrequency] = useState('Weekly')
@@ -201,9 +213,15 @@ export function useApp() {
     [answers],
   )
 
-  const dogName = typeof answers.name === 'string' && answers.name ? answers.name : 'Louie'
-  const dogSize = typeof answers.size === 'string' ? SIZE_LABELS[answers.size] ?? '' : ''
-  const dogComplete = STEPS.filter((s) => s.required).every((s) => answers[s.id])
+  const activeDog = dogs.find((d) => d.id === activeDogId) ?? null
+  const draftName = typeof answers.name === 'string' && answers.name ? answers.name : ''
+  const dogName = activeDog?.name || draftName || 'Louie'
+  const sizeOf = (a: Record<string, string | string[]>) =>
+    typeof a.size === 'string' ? SIZE_LABELS[a.size] ?? '' : ''
+  const dogSize = sizeOf(activeDog?.answers ?? answers)
+  const draftComplete = STEPS.filter((s) => s.required).every((s) => answers[s.id])
+  /** Home can search once a dog is saved, not merely once the draft looks finished. */
+  const dogComplete = activeDog !== null
 
   /**
    * The screen list above the phone is a reviewer's shortcut, not part of the product.
@@ -227,6 +245,48 @@ export function useApp() {
     go('wizard')
   }
 
+  /** Start a fresh profile — a second dog, not an edit of the first. */
+  const addDog = () => {
+    setEditingId(null)
+    setAnswers({})
+    setPhotoUrl((old) => {
+      if (old) URL.revokeObjectURL(old)
+      return null
+    })
+    setStep(0)
+    setSheet(null)
+    go('wizard')
+  }
+
+  /** Reopen a saved profile in the questionnaire. */
+  const editDog = (id: string) => {
+    const dog = dogs.find((d) => d.id === id)
+    if (!dog) return
+    setEditingId(id)
+    setAnswers(dog.answers)
+    setPhotoUrl(dog.photo)
+    setStep(0)
+    setSheet(null)
+    go('wizard')
+  }
+
+  /** Commit the draft. This is what the Save button on the saved screen does. */
+  const saveDog = () => {
+    const name = draftName || 'Your dog'
+    if (editingId) {
+      setDogs((list) =>
+        list.map((d) => (d.id === editingId ? { ...d, name, photo, answers } : d)),
+      )
+      setActiveDogId(editingId)
+    } else {
+      const id = 'dog-' + Date.now()
+      setDogs((list) => [...list, { id, name, photo, answers }])
+      setActiveDogId(id)
+      setEditingId(id)
+    }
+    go('home')
+  }
+
   return {
     route,
     transition,
@@ -234,6 +294,26 @@ export function useApp() {
     jumpTo,
     back,
     openWizard,
+    addDog,
+    editDog,
+    saveDog,
+    dogs,
+    activeDogId,
+    chooseDog: (id: string) => {
+      setActiveDogId(id)
+      setSheet(null)
+    },
+    dogSummaryLine: (d: Dog) =>
+      [
+        sizeOf(d.answers),
+        typeof d.answers.lead === 'string'
+          ? STEPS.find((s) => s.id === 'lead')?.options?.find((o) => o.value === d.answers.lead)
+              ?.label
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' · '),
+    draftComplete,
     dogComplete,
     step,
     nextStep,

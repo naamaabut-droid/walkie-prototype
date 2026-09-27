@@ -73,11 +73,12 @@ Nothing here is a picture of a control.
 - **Selection** — every wizard option, every filter chip, the last-minute switch and the ♡ hold state.
 - **The summary is computed.** Type *Rex*, choose *Giant*, and the saved screen says Rex and Giant,
   with only the rows you answered.
-- **Finishing the questionnaire does not hijack the flow.** It ends in **Save**, which returns you
-  to Home with the profile filled in; *Find matches* is offered one step quieter, because saving the
-  dog and asking to search are two different intentions. Going the other way, *Find a walker* with
-  no profile opens the questionnaire — at the first question still unanswered, not back at step 1 —
-  because it is required before anyone can be matched.
+- **The dog profile is a real record, and there can be more than one.** The questionnaire is only
+  reached the first time, or by *Add another dog*, or by *Edit* from the picker. Once a dog is
+  saved, `For` opens a chooser holding **only the dogs actually saved** — no fixtures — with the
+  saved one selected.
+- **The questionnaire is the gate.** *Find a walker* with no profile opens it, at the first question
+  still unanswered rather than back at step 1, because nobody can be matched without it.
 
 **What deliberately does not work:** anything outside Flow 1 — the Saved, Scheduled, Community and
 Profile tabs, Messages, the inbox, the full walker list. Those screens were never designed, so
@@ -93,8 +94,8 @@ Two scripts, both against the running app:
 - `node tools/probe.mjs <dir>` — drives the actual controls and asserts the state changed: typing
   sticks, the picker writes back, the wizard reaches the summary, the sort changes, the heart
   toggles, the photo uploads and reaches the saved screen, and the booking screen carries both the
-  chosen time and the entrance, apartment and floor, and that the questionnaire returns you home
-  rather than to the results. 24 checks, 0 console errors.
+  chosen time and the entrance, apartment and floor, and that the dog picker holds exactly the dogs
+  that were saved. 33 checks, 0 console errors.
 
 Every screen was compared against its Figma frame in a render, not by reading the code.
 

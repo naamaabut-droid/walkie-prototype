@@ -105,7 +105,7 @@ export function DogWizard({ app }: { app: AppState }) {
 
       {step.kind === 'notes' ? (
         <div className="stack" style={{ gap: 8, padding: '6px 18px' }}>
-          <span className="t-title-13">Your note</span>
+          <span className="t-title-13">Your note (optional)</span>
           <textarea
             className="t-body-12"
             rows={3}
@@ -233,23 +233,27 @@ export function DogSaved({ app }: { app: AppState }) {
     <Screen
       footer={
         <div className="stack" style={{ gap: 9, padding: '10px 18px 24px' }}>
-          {/* Finishing the questionnaire is not the same as asking to search. The
-              profile is saved and the user goes back to where they were; looking
-              for matches straight away is offered, one step quieter. */}
-          <Button onClick={() => app.go('home')}>Save</Button>
-          <Button variant="secondary" onClick={() => app.go('results')}>
-            Find matches for {app.dogName}
+          <Button
+            onClick={() => {
+              app.saveDog()
+              app.go('results')
+            }}
+          >
+            Show Matches
           </Button>
-          <button className="t-title-13 muted center" onClick={() => app.go('wizard')}>
-            Back to editing
-          </button>
+          <Button variant="ghost" onClick={() => app.go('wizard')}>
+            Back To Editing
+          </Button>
         </div>
       }
     >
       <header className="appbar">
+        {/* The frame draws this X but gives it no behaviour. It saves and returns
+            home — closing a screen called "Dog Details Saved" must not lose them. */}
         <button
           className="appbar__side appbar__side--right t-title-13 grow right"
-          onClick={() => app.go('home')}
+          aria-label="Close"
+          onClick={app.saveDog}
         >
           X
         </button>

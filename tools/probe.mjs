@@ -163,21 +163,56 @@ for (let i = 0; i < 8; i++) {
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
   await page.waitForTimeout(220)
 }
+const lastStep = await page.locator('.device').innerText()
+check('The notes step ends in Save alone', lastStep.includes('Save') && !lastStep.includes('Skip'))
+check('The note label says it is optional', lastStep.includes('Your note (optional)'))
 await page.getByRole('button', { name: 'Save', exact: true }).click()
 await page.waitForTimeout(600)
 const savedScreen = await page.locator('.device').innerText()
 check('The questionnaire ends on the saved screen', savedScreen.includes('Dog Details Saved'))
-check('Save is the primary action, matches the quieter one', savedScreen.includes('Find matches for'))
+check(
+  'The saved screen carries the two buttons the frame draws',
+  savedScreen.includes('Show Matches') && savedScreen.includes('Back To Editing'),
+)
 await device.screenshot({ path: `${OUT}/dog-saved-actions.png` })
 
-await page.getByRole('button', { name: 'Save', exact: true }).click()
+// the X saves and returns home, so closing the screen does not discard the profile
+await page.getByRole('button', { name: 'Close' }).first().click()
 await page.waitForTimeout(700)
 check(
-  'Saving returns to Home, not to results',
+  'Closing the saved screen returns to Home',
   (await page.locator('.device').innerText()).includes('Need a walk today?'),
 )
 check(
   'Home now carries the dog',
+  (await page.locator('.field', { hasText: 'For' }).innerText()).includes('Louie'),
+)
+
+// 10 — "For" is now a dog picker holding only the dog that was actually saved
+await page.locator('.field', { hasText: 'For' }).click()
+await page.waitForTimeout(500)
+const dogRows = await page.locator('.dogrow').count()
+check('The picker holds exactly the one saved dog', dogRows === 1, `${dogRows} rows`)
+check(
+  'No invented dogs in the list',
+  (await page.locator('.dogrow').first().innerText()).includes('Louie'),
+)
+check('It offers adding another dog', (await page.locator('.dogadd').count()) === 1)
+check('The saved dog is the selected one', (await page.locator('.dogrow[data-active]').count()) === 1)
+await device.screenshot({ path: `${OUT}/dog-picker.png` })
+
+// adding a dog starts an empty questionnaire, it does not reopen the saved one
+await page.locator('.dogadd').click()
+await page.waitForTimeout(600)
+const fresh = page.locator('input[type="text"], input:not([type])').first()
+check('Add another dog starts empty at step 1', (await fresh.inputValue()) === '')
+check('…and at the first question', (await page.locator('.device').innerText()).includes('Step 1 of 9'))
+
+// back out, and the saved dog is still the default in the field
+await page.getByRole('button', { name: 'Close' }).first().click()
+await page.waitForTimeout(600)
+check(
+  'The saved dog is still the default in the field',
   (await page.locator('.field', { hasText: 'For' }).innerText()).includes('Louie'),
 )
 

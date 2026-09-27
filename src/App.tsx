@@ -17,6 +17,7 @@ import { WalkerProfile } from './screens/WalkerProfile'
 import { BookWalker, PushAccepted, RequestSent } from './screens/Booking'
 import { Sheet } from './components/Sheet'
 import { AddressSheet, ListPicker, WhenPicker } from './components/Picker'
+import { DogPicker } from './components/DogPicker'
 import { Button } from './components/ui'
 import './styles/app.css'
 
@@ -100,6 +101,17 @@ export default function App() {
               title={app.sheet === 'near' ? 'Where does the walk start?' : 'Pickup address'}
               address={app.address}
               onChange={app.setAddress}
+              onDismiss={app.closeSheet}
+            />
+          ) : null}
+          {app.sheet === 'dog' ? (
+            <DogPicker
+              dogs={app.dogs}
+              activeId={app.activeDogId}
+              summaryLine={app.dogSummaryLine}
+              onChoose={app.chooseDog}
+              onEdit={app.editDog}
+              onAdd={app.addDog}
               onDismiss={app.closeSheet}
             />
           ) : null}

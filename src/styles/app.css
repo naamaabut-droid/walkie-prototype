@@ -334,3 +334,66 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 input::placeholder,
 textarea::placeholder { color: var(--neutral-500); }
+
+/* ---- dog picker ---- */
+.dogrow {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-12);
+  background: var(--neutral-0);
+  overflow: hidden;
+}
+.dogrow[data-active] { background: var(--neutral-900); border-color: var(--neutral-900); color: var(--neutral-0); }
+.dogrow[data-active] .dogrow__sub { color: var(--neutral-300); }
+.dogrow[data-active] .dogrow__edit { color: var(--neutral-300); border-left-color: rgba(255,255,255,0.22); }
+.dogrow__sub { color: var(--neutral-500); }
+.dogrow__main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  text-align: left;
+}
+.dogrow__photo {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+.dogrow__photo--empty {
+  display: grid;
+  place-items: center;
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+}
+.dogrow__edit {
+  flex: none;
+  padding: 0 14px;
+  color: var(--neutral-500);
+  border-left: 1px solid var(--neutral-300);
+}
+
+.dogadd {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-12);
+  border: 1px dashed var(--neutral-300);
+  background: transparent;
+}
+.dogadd__plus {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+}

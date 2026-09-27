@@ -34,7 +34,7 @@ export function Home({ app }: { app: AppState }) {
           <Field
             label="For"
             value={app.dogComplete ? app.dogName : 'Add Dog Details'}
-            onClick={app.openWizard}
+            onClick={() => (app.dogs.length > 0 ? app.openSheet('dog') : app.openWizard())}
           />
           <Field
             label="Near"
