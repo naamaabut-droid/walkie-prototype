@@ -1,5 +1,5 @@
 import { Screen } from '../components/Chrome'
-import { Button, Segmented } from '../components/ui'
+import { Button, EditableField, Field, Segmented } from '../components/ui'
 import type { AppState } from '../state'
 
 /** F1-6 · Book. Payment is not here on purpose — it is set once, in settings. */
@@ -34,9 +34,20 @@ export function BookWalker({ app }: { app: AppState }) {
           </button>
         </div>
 
-        <LabelledField label="Pickup address" value="Florentin, 12 Vital St." />
-        <LabelledField label="Day and time" value="Thursday · 17:00" strong />
-        <LabelledField label="Walk length" value="45 min" />
+        <Labelled label="Pickup address">
+          <EditableField
+            label=""
+            value={app.form.address}
+            onChange={(v) => app.setField('address', v)}
+            placeholder="Street and number"
+          />
+        </Labelled>
+        <Labelled label="Day and time">
+          <Field label="" value={app.whenLabel} onClick={() => app.openSheet('when')} />
+        </Labelled>
+        <Labelled label="Walk length">
+          <Field label="" value={app.form.length} onClick={() => app.openSheet('length')} />
+        </Labelled>
 
         <div className="stack" style={{ gap: 6 }}>
           <span className="t-title-12 dim">How often</span>
@@ -51,21 +62,11 @@ export function BookWalker({ app }: { app: AppState }) {
   )
 }
 
-function LabelledField({
-  label,
-  value,
-  strong = false,
-}: {
-  label: string
-  value: string
-  strong?: boolean
-}) {
+function Labelled({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="stack" style={{ gap: 6 }}>
       <span className="t-title-12 dim">{label}</span>
-      <div className="field">
-        <span className={strong ? 't-title-13' : 't-body-13 field__value'}>{value}</span>
-      </div>
+      {children}
     </div>
   )
 }
@@ -75,7 +76,7 @@ export function RequestSent({ app }: { app: AppState }) {
   const w = app.walker
   const first = w.name.split(' ')[0]
   return (
-    <Screen tab={app.route === 'waiting' ? 'Scheduled' : null}>
+    <Screen tab={app.route === 'waiting' ? 'Scheduled' : null} app={app}>
       <header className="appbar">
         <span className="grow" />
         <button className="t-heading-18" onClick={() => app.go('home')}>
@@ -106,11 +107,15 @@ export function RequestSent({ app }: { app: AppState }) {
         <div className="card stack" style={{ gap: 7 }}>
           <span className="t-title-12">What you asked for</span>
           <Row label="Dog" value={`${app.dogName} · ${app.dogSize}`} />
-          <Row label="When" value="Today 17:00 · 45 min" />
+          <Row label="When" value={`${app.whenLabel} · ${app.form.length}`} />
           <Row label="Price" value={`₪${w.price} · only if she accepts`} />
         </div>
 
-        <button className="card row between" style={{ padding: 14, width: '100%' }}>
+        <button
+          className="card row between"
+          style={{ padding: 14, width: '100%' }}
+          onClick={() => app.outOfScope('Messages')}
+        >
           <span className="t-body-12 muted">Message {first}</span>
           <span className="t-label-12">›</span>
         </button>
@@ -165,7 +170,7 @@ export function PushAccepted({ app }: { app: AppState }) {
         </div>
         <span className="t-title-14">{first} accepted your walk</span>
         <span className="t-body-12 dim">
-          Thursday 17:00 · 45 min · {app.frequency === 'Weekly' ? 'weekly' : 'one-off'}
+          {app.whenLabel} · {app.form.length} · {app.frequency === 'Weekly' ? 'weekly' : 'one-off'}
         </span>
       </div>
       <div className="spring" />

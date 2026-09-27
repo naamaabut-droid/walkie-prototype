@@ -264,3 +264,24 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding: 11px 13px 12px;
   margin: 0 14px;
 }
+
+/* ---- out-of-scope notice ----
+   The wrapper does the centring. Framer Motion writes `transform` inline, so a
+   translateX(-50%) on the animated element itself gets overwritten. */
+.notice-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 110px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.notice {
+  max-width: 300px;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: var(--radius-full);
+  background: var(--bg-inverse);
+  color: var(--text-on-inverse);
+}

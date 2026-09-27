@@ -38,26 +38,33 @@ export function AppBar({
 const TABS = ['Saved', 'Scheduled', 'Home', 'Community', 'Profile'] as const
 export type Tab = (typeof TABS)[number]
 
-export function TabBar({ active = 'Home' }: { active?: Tab }) {
+export function TabBar({
+  active = 'Home',
+  onSelect,
+}: {
+  active?: Tab
+  onSelect?: (tab: Tab) => void
+}) {
   return (
     <nav className="tabbar">
       {TABS.map((tab) => {
         const current = tab === active
-        if (tab === 'Home') {
-          return (
-            <div key={tab} className="tabbar__item" aria-current={current ? 'page' : undefined}>
+        return (
+          <button
+            key={tab}
+            className="tabbar__item"
+            aria-current={current ? 'page' : undefined}
+            onClick={() => onSelect?.(tab)}
+          >
+            {tab === 'Home' ? (
               <div className={'tabbar__home' + (current ? '' : ' tabbar__home--idle')}>
                 <div className="tabbar__box" />
               </div>
-              <span className={current ? 't-title-10' : 't-body-10'}>{tab}</span>
-            </div>
-          )
-        }
-        return (
-          <div key={tab} className="tabbar__item" aria-current={current ? 'page' : undefined}>
-            <div className="tabbar__box" />
+            ) : (
+              <div className="tabbar__box" />
+            )}
             <span className={current ? 't-title-10' : 't-body-10'}>{tab}</span>
-          </div>
+          </button>
         )
       })}
     </nav>
@@ -68,6 +75,7 @@ export function TabBar({ active = 'Home' }: { active?: Tab }) {
 export function Screen({
   children,
   tab,
+  app,
   dark = false,
   scroll = true,
   footer,
@@ -75,6 +83,8 @@ export function Screen({
 }: {
   children: ReactNode
   tab?: Tab | null
+  /** only needed when the screen shows the tab bar, so taps can report out of scope */
+  app?: { go: (r: 'home') => void; outOfScope: (what: string) => void }
   dark?: boolean
   scroll?: boolean
   footer?: ReactNode
@@ -85,7 +95,12 @@ export function Screen({
       <StatusBar dark={dark} />
       {scroll ? <div className="screen__scroll">{children}</div> : children}
       {footer}
-      {tab ? <TabBar active={tab} /> : null}
+      {tab ? (
+        <TabBar
+          active={tab}
+          onSelect={(t) => (t === 'Home' ? app?.go('home') : app?.outOfScope(t))}
+        />
+      ) : null}
     </div>
   )
 }

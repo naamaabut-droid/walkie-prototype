@@ -61,12 +61,60 @@ export function ChipGroup({
   )
 }
 
-export function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="field">
+export function Field({
+  label,
+  value,
+  onClick,
+}: {
+  label: string
+  value: string
+  onClick?: () => void
+}) {
+  const inner = (
+    <>
       <span className="field__label t-title-13">{label}</span>
       <span className="field__value t-body-13">{value}</span>
-    </div>
+    </>
+  )
+  if (!onClick) return <div className="field">{inner}</div>
+  return (
+    <button className="field" style={{ width: '100%' }} onClick={onClick}>
+      {inner}
+    </button>
+  )
+}
+
+/** A field you can type into. The label stays, the value is the input. */
+export function EditableField({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+}) {
+  return (
+    <label className="field">
+      <span className="field__label t-title-13">{label}</span>
+      <input
+        className="field__value t-body-13"
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          border: 0,
+          outline: 'none',
+          background: 'transparent',
+          textAlign: 'right',
+          flex: 1,
+          minWidth: 0,
+          padding: 0,
+        }}
+      />
+    </label>
   )
 }
 

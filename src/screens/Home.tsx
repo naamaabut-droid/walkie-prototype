@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Screen } from '../components/Chrome'
-import { Field, Segmented } from '../components/ui'
+import { EditableField, Field, Segmented } from '../components/ui'
 import { WalkerCard } from '../components/WalkerCard'
 import { WALKERS } from '../data/walkers'
 import type { AppState } from '../state'
@@ -10,10 +10,15 @@ export function Home({ app }: { app: AppState }) {
   const [mode, setMode] = useState('Schedule')
 
   return (
-    <Screen tab="Home">
+    <Screen tab="Home" app={app}>
       <div className="appbar">
         <span className="appbar__title t-heading-18 grow">Walkie</span>
-        <span className="appbar__side appbar__side--right t-label-12">✉ ◍</span>
+        <button
+          className="appbar__side appbar__side--right t-label-12"
+          onClick={() => app.outOfScope('Inbox')}
+        >
+          ✉ ◍
+        </button>
       </div>
 
       <div style={{ padding: '0 20px 12px' }}>
@@ -25,15 +30,23 @@ export function Home({ app }: { app: AppState }) {
       <div style={{ padding: '0 20px 20px' }}>
         <div className="card card--lg stack" style={{ gap: 9 }}>
           <Segmented options={['Now', 'Schedule']} value={mode} onChange={setMode} />
-          <button style={{ display: 'block', width: '100%' }} onClick={() => app.go('wizard')}>
-            <Field
-              label="For"
-              value={app.dogComplete ? app.dogName : 'Add Dog Details'}
-            />
-          </button>
-          <Field label="Near" value="Florentin, Tel Aviv" />
-          <Field label="When" value="Select date and time" />
-          <Field label="Walk length" value="45 min" />
+          <Field
+            label="For"
+            value={app.dogComplete ? app.dogName : 'Add Dog Details'}
+            onClick={() => app.go('wizard')}
+          />
+          <EditableField
+            label="Near"
+            value={app.form.near}
+            onChange={(v) => app.setField('near', v)}
+            placeholder="Neighbourhood or street"
+          />
+          <Field
+            label="When"
+            value={mode === 'Now' ? 'As soon as possible' : app.whenLabel}
+            onClick={() => (mode === 'Now' ? app.outOfScope('Now mode') : app.openSheet('when'))}
+          />
+          <Field label="Walk length" value={app.form.length} onClick={() => app.openSheet('length')} />
           <button
             className="btn btn--primary t-title-14"
             style={{ borderRadius: 10, padding: '14px 0' }}
@@ -49,7 +62,9 @@ export function Home({ app }: { app: AppState }) {
           <h2 className="t-heading-16" style={{ margin: 0 }}>
             Scheduled
           </h2>
-          <span className="t-title-12 muted">See all ›</span>
+          <button className="t-title-12 muted" onClick={() => app.outOfScope('Scheduled')}>
+            See all ›
+          </button>
         </div>
         <div
           className="stack"

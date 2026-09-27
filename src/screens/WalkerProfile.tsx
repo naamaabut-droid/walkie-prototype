@@ -18,7 +18,9 @@ export function WalkerProfile({ app }: { app: AppState }) {
           }}
         >
           <Button onClick={() => app.go('book')}>Request a walk · ₪{w.price}</Button>
-          <Button variant="secondary">Message {w.name.split(' ')[0]}</Button>
+          <Button variant="secondary" onClick={() => app.outOfScope('Messages')}>
+            Message {w.name.split(' ')[0]}
+          </Button>
         </div>
       }
     >
@@ -30,7 +32,12 @@ export function WalkerProfile({ app }: { app: AppState }) {
         >
           ‹&nbsp;&nbsp;Results
         </button>
-        <span className="appbar__side appbar__side--right t-label-12">♡&nbsp;&nbsp;⋯</span>
+        <button
+          className="appbar__side appbar__side--right t-label-12"
+          onClick={() => app.toggleSave(w.id)}
+        >
+          {app.saved.includes(w.id) ? '♥' : '♡'}&nbsp;&nbsp;⋯
+        </button>
       </header>
 
       <div className="stack" style={{ gap: 12, padding: '0 20px 12px' }}>
@@ -78,7 +85,11 @@ export function WalkerProfile({ app }: { app: AppState }) {
         </div>
       </Section>
 
-      <Section title={`From ${w.name.split(' ')[0]}’s walks`} aside={`See all ${w.walkPhotos}  ›`}>
+      <Section
+        title={`From ${w.name.split(' ')[0]}’s walks`}
+        aside={`See all ${w.walkPhotos}  ›`}
+        onAside={() => app.outOfScope('Her walk gallery')}
+      >
         <div className="row" style={{ gap: 10, alignItems: 'stretch' }}>
           {[
             { dog: 'Bamba', by: 'Noa R.', when: '2 days ago' },
@@ -146,10 +157,12 @@ export function WalkerProfile({ app }: { app: AppState }) {
 function Section({
   title,
   aside,
+  onAside,
   children,
 }: {
   title: string
   aside?: string
+  onAside?: () => void
   children: React.ReactNode
 }) {
   return (
@@ -158,7 +171,11 @@ function Section({
         <h2 className="t-title-14" style={{ margin: 0 }}>
           {title}
         </h2>
-        {aside ? <span className="t-body-12 muted">{aside}</span> : null}
+        {aside ? (
+          <button className="t-body-12 muted" onClick={onAside}>
+            {aside}
+          </button>
+        ) : null}
       </div>
       {children}
     </section>

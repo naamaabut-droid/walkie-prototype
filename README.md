@@ -53,11 +53,35 @@ src/
 tools/shoot.mjs         screenshots every route headlessly — how this was checked
 ```
 
+## The controls are real
+
+Nothing here is a picture of a control.
+
+- **Typing** — `Near` on Home and `Pickup address` on Book are text inputs. So are the dog's name
+  and the free-text note in the wizard.
+- **Pickers** — `When` opens a two-wheel day-and-time sheet that opens on the current value;
+  `Walk length` and the sort control open a list sheet. Each writes back to the field, and the
+  choice follows you: pick *Tomorrow · 18:00* on Home and the booking screen and the push both say so.
+- **Selection** — every wizard option, every filter chip, the last-minute switch and the ♡ hold state.
+- **The summary is computed.** Type *Rex*, choose *Giant*, and the saved screen says Rex and Giant,
+  with only the rows you answered.
+
+**What deliberately does not work:** anything outside Flow 1 — the Saved, Scheduled, Community and
+Profile tabs, Messages, the inbox, the full walker list. Those screens were never designed, so
+tapping them says *"— not part of Flow 1"* rather than doing nothing. A dead control reads as a bug;
+one that names its own boundary reads as a decision.
+
 ## How it was verified
 
-`node tools/shoot.mjs <dir>` drives the running prototype through all ten screens plus the wizard,
-captures each one and reports any console error. Every screen in this prototype was compared against
-its Figma frame in a render, not by reading the code.
+Two scripts, both against the running app:
+
+- `node tools/shoot.mjs <dir>` — walks all ten screens plus the wizard, captures each, reports
+  console errors.
+- `node tools/probe.mjs <dir>` — drives the actual controls and asserts the state changed: typing
+  sticks, the picker writes back, the wizard reaches the summary, the sort changes, the heart
+  toggles, and the booking screen carries the chosen time. 9 checks, 0 console errors.
+
+Every screen was compared against its Figma frame in a render, not by reading the code.
 
 ## Deliberately not here
 

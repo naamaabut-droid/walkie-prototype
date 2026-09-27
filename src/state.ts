@@ -80,9 +80,38 @@ function transitionFor(from: Route, to: Route): Transition {
   return ORDER.indexOf(to) >= ORDER.indexOf(from) ? 'forward' : 'back'
 }
 
+/** Which chooser is open over the current screen, if any. */
+export type SheetKind = 'when' | 'length' | 'sort' | null
+
+export type Form = {
+  near: string
+  day: string
+  time: string
+  length: string
+  address: string
+  sort: string
+}
+
+const DEFAULT_FORM: Form = {
+  near: 'Florentin, Tel Aviv',
+  day: 'Thursday',
+  time: '17:00',
+  length: '45 min',
+  address: 'Florentin, 12 Vital St.',
+  sort: 'Best match',
+}
+
+export const DAYS = ['Today', 'Tomorrow', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+export const TIMES = ['07:00', '08:00', '12:00', '16:00', '16:30', '17:00', '17:30', '18:00', '19:00']
+export const LENGTHS = ['30 min', '45 min', '60 min', 'Longer']
+export const SORTS = ['Best match', 'Nearest', 'Soonest', 'Price, low to high', 'Rating']
+
 export function useApp() {
   const [route, setRoute] = useState<Route>('home')
   const [transition, setTransition] = useState<Transition>('forward')
+  const [form, setForm] = useState<Form>(DEFAULT_FORM)
+  const [sheet, setSheet] = useState<SheetKind>(null)
+  const [notice, setNotice] = useState<string | null>(null)
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [saved, setSaved] = useState<string[]>([])
@@ -153,10 +182,13 @@ export function useApp() {
 
   /**
    * The screen list above the phone is a reviewer's shortcut, not part of the product.
-   * Jumping past the wizard fills the profile, so the later screens have something to read.
+   * Jumping past the wizard fills the profile so the later screens have something to read —
+   * but only when nothing has been answered yet. A half-finished profile is the user's, and
+   * overwriting it would throw away what they just typed.
    */
   const jumpTo = (next: Route) => {
-    if (ORDER.indexOf(next) > ORDER.indexOf('wizard') && !dogComplete) setAnswers(PREFILLED)
+    const untouched = Object.keys(answers).length === 0
+    if (ORDER.indexOf(next) > ORDER.indexOf('wizard') && untouched) setAnswers(PREFILLED)
     go(next)
   }
 
@@ -197,6 +229,26 @@ export function useApp() {
     matchCount: WALKERS.length,
     frequency,
     setFrequency,
+
+    form,
+    setField: <K extends keyof Form>(key: K, value: Form[K]) =>
+      setForm((f) => ({ ...f, [key]: value })),
+    setWhen: (day: string, time: string) => setForm((f) => ({ ...f, day, time })),
+    whenLabel: `${form.day} · ${form.time}`,
+
+    sheet,
+    openSheet: (kind: Exclude<SheetKind, null>) => setSheet(kind),
+    closeSheet: () => setSheet(null),
+
+    /**
+     * Anything outside Flow 1 says so out loud. A dead control reads as a bug;
+     * a control that tells you it is out of scope reads as a decision.
+     */
+    notice,
+    outOfScope: (what: string) => {
+      setNotice(`${what} — not part of Flow 1`)
+      window.setTimeout(() => setNotice(null), 1900)
+    },
   }
 }
 

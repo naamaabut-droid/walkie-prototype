@@ -1,5 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ORDER, SCREEN_TITLES, useApp, type Transition } from './state'
+import {
+  DAYS,
+  LENGTHS,
+  ORDER,
+  SCREEN_TITLES,
+  SORTS,
+  TIMES,
+  useApp,
+  type Transition,
+} from './state'
 import { Home } from './screens/Home'
 import { DogSaved, DogWizard } from './screens/DogWizard'
 import { Results } from './screens/Results'
@@ -7,6 +16,7 @@ import { Filters } from './screens/Filters'
 import { WalkerProfile } from './screens/WalkerProfile'
 import { BookWalker, PushAccepted, RequestSent } from './screens/Booking'
 import { Sheet } from './components/Sheet'
+import { ListPicker, WhenPicker } from './components/Picker'
 import { Button } from './components/ui'
 import './styles/app.css'
 
@@ -71,6 +81,53 @@ export default function App() {
           <motion.div key={app.route} className="screen" {...v} style={{ position: 'absolute' }}>
             <Router app={app} />
           </motion.div>
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {app.sheet === 'when' ? (
+            <WhenPicker
+              dogName={app.dogName}
+              days={DAYS}
+              times={TIMES}
+              day={app.form.day}
+              time={app.form.time}
+              onChange={app.setWhen}
+              onDismiss={app.closeSheet}
+            />
+          ) : null}
+          {app.sheet === 'length' ? (
+            <ListPicker
+              title="How long a walk?"
+              options={LENGTHS}
+              value={app.form.length}
+              onPick={(v) => app.setField('length', v)}
+              onDismiss={app.closeSheet}
+            />
+          ) : null}
+          {app.sheet === 'sort' ? (
+            <ListPicker
+              title="Sort by"
+              note="Sorting reorders the list. It never removes anyone."
+              options={SORTS}
+              value={app.form.sort}
+              onPick={(v) => app.setField('sort', v)}
+              onDismiss={app.closeSheet}
+            />
+          ) : null}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {app.notice ? (
+            <motion.div
+              className="notice-wrap"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.18 }}
+            >
+              <span className="notice t-title-12">{app.notice}</span>
+            </motion.div>
+          ) : null}
         </AnimatePresence>
 
         <AnimatePresence>

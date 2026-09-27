@@ -6,15 +6,15 @@ import type { AppState } from '../state'
 /** F1-3 · Results. Four ranked, the rest listed — nobody who passes the rules is hidden. */
 export function Results({ app }: { app: AppState }) {
   return (
-    <Screen tab="Home">
+    <Screen tab="Home" app={app}>
       <div className="stack" style={{ gap: 6, padding: '0 20px 10px' }}>
         <h1 className="t-heading-18" style={{ margin: 0 }}>
           Matched for {app.dogName}
         </h1>
         <div className="row" style={{ gap: 10 }}>
           <span className="t-body-12 muted grow">{TOTAL_NEARBY} walkers near you</span>
-          <button className="chip t-title-11" onClick={() => app.go('filters')}>
-            Best match <span className="t-body-11 muted">⌄</span>
+          <button className="chip t-title-11" onClick={() => app.openSheet('sort')}>
+            {app.form.sort} <span className="t-body-11 muted">⌄</span>
           </button>
         </div>
       </div>
@@ -60,6 +60,7 @@ export function Results({ app }: { app: AppState }) {
           <button
             className="btn btn--secondary t-title-13"
             style={{ borderRadius: 12, padding: '12px 0' }}
+            onClick={() => app.outOfScope(`The full list of ${TOTAL_NEARBY}`)}
           >
             See all {TOTAL_NEARBY}
           </button>
