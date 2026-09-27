@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Screen } from '../components/Chrome'
 import { Button, OptionRow, Progress } from '../components/ui'
 import { STEPS } from '../data/dogWizard'
@@ -88,6 +89,7 @@ export function DogWizard({ app }: { app: AppState }) {
           <input
             className="t-title-14"
             value={String(app.answers.name ?? '')}
+            placeholder={step.placeholder}
             onChange={(e) => app.answer('name', e.target.value)}
             style={{
               padding: '15px 16px',
@@ -97,33 +99,7 @@ export function DogWizard({ app }: { app: AppState }) {
             }}
           />
           <span className="t-eyebrow-11 muted">PHOTO · OPTIONAL</span>
-          <div
-            className="stack"
-            style={{
-              gap: 6,
-              alignItems: 'center',
-              padding: '26px 0',
-              borderRadius: 14,
-              border: '1px solid var(--neutral-300)',
-              background: 'var(--neutral-0)',
-            }}
-          >
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 999,
-                background: 'var(--neutral-100)',
-                display: 'grid',
-                placeItems: 'center',
-                color: 'var(--neutral-700)',
-              }}
-            >
-              +
-            </div>
-            <span className="t-title-13">Add a photo</span>
-            <span className="t-body-11 muted">Camera or photo library</span>
-          </div>
+          <PhotoField photo={app.photo} onPick={app.setPhoto} />
         </div>
       ) : null}
 
@@ -173,6 +149,84 @@ export function DogWizard({ app }: { app: AppState }) {
   )
 }
 
+/** The upload is real: it opens the picker, previews what you chose, and can be replaced. */
+function PhotoField({
+  photo,
+  onPick,
+}: {
+  photo: string | null
+  onPick: (file: File | null) => void
+}) {
+  const input = useRef<HTMLInputElement>(null)
+  return (
+    <div
+      className="stack"
+      style={{
+        gap: 6,
+        alignItems: 'center',
+        padding: photo ? '16px 0' : '26px 0',
+        borderRadius: 14,
+        border: '1px solid var(--neutral-300)',
+        background: 'var(--neutral-0)',
+      }}
+    >
+      <input
+        ref={input}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) => onPick(e.target.files?.[0] ?? null)}
+      />
+
+      {photo ? (
+        <>
+          <img
+            src={photo}
+            alt="Your dog"
+            style={{ width: 104, height: 104, borderRadius: 999, objectFit: 'cover' }}
+          />
+          <div className="row" style={{ gap: 8, paddingTop: 6 }}>
+            <button className="chip t-label-11" onClick={() => input.current?.click()}>
+              Replace
+            </button>
+            <button
+              className="chip t-label-11"
+              onClick={() => {
+                onPick(null)
+                if (input.current) input.current.value = ''
+              }}
+            >
+              Remove
+            </button>
+          </div>
+        </>
+      ) : (
+        <button
+          className="stack"
+          style={{ gap: 6, alignItems: 'center', width: '100%' }}
+          onClick={() => input.current?.click()}
+        >
+          <span
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 999,
+              background: 'var(--neutral-100)',
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--neutral-700)',
+            }}
+          >
+            +
+          </span>
+          <span className="t-title-13">Add a photo</span>
+          <span className="t-body-11 muted">Camera or photo library</span>
+        </button>
+      )}
+    </div>
+  )
+}
+
 /** F1-2 · saved. Every row is read back from state, not drawn. */
 export function DogSaved({ app }: { app: AppState }) {
   return (
@@ -206,9 +260,17 @@ export function DogSaved({ app }: { app: AppState }) {
           className="stack card card--lg"
           style={{ gap: 16, alignItems: 'center', padding: '32px 14px 16px' }}
         >
-          <div
-            style={{ width: 108, height: 108, borderRadius: 999, background: 'var(--neutral-100)' }}
-          />
+          {app.photo ? (
+            <img
+              src={app.photo}
+              alt={app.dogName}
+              style={{ width: 108, height: 108, borderRadius: 999, objectFit: 'cover' }}
+            />
+          ) : (
+            <div
+              style={{ width: 108, height: 108, borderRadius: 999, background: 'var(--neutral-100)' }}
+            />
+          )}
           <div className="stack" style={{ width: '100%' }}>
             {app.summary.map((row, i) => (
               <div

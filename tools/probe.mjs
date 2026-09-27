@@ -76,10 +76,22 @@ check('Out-of-scope tab reports itself', notice.includes('not part of Flow 1'), 
 await device.screenshot({ path: `${OUT}/out-of-scope.png` })
 await page.waitForTimeout(1800)
 
-// 5 — the wizard writes into the summary
+// 5 — the wizard: placeholder, a real photo upload, and answers reaching the summary
 await page.getByRole('button', { name: 'About your dog', exact: true }).first().click()
 await page.waitForTimeout(500)
-const nameInput = page.locator('input').first()
+const nameInput = page.locator('input[type="text"], input:not([type])').first()
+check('Dog name shows a placeholder', (await nameInput.getAttribute('placeholder')) === 'Louie')
+
+// a 2x2 png, enough to prove the preview renders what was chosen
+const PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAF0lEQVR4AWP8z8Dwn4GBgYGJAQ0AAB6hAQEjfCeQAAAAAElFTkSuQmCC',
+  'base64',
+)
+await page.setInputFiles('input[type="file"]', { name: 'louie.png', mimeType: 'image/png', buffer: PNG })
+await page.waitForTimeout(400)
+check('Photo preview appears', (await page.locator('img[alt="Your dog"]').count()) === 1)
+await device.screenshot({ path: `${OUT}/photo-uploaded.png` })
+
 await nameInput.fill('Rex')
 await page.getByRole('button', { name: 'Continue', exact: true }).click()
 await page.waitForTimeout(350)
@@ -89,6 +101,7 @@ await page.getByRole('button', { name: 'Dog details saved', exact: true }).first
 await page.waitForTimeout(700)
 const summary = await page.locator('.device').innerText()
 check('Wizard answers reach the summary', summary.includes('Rex') && summary.includes('Giant'), '')
+check('Photo reaches the saved screen', (await page.locator('img[alt="Rex"]').count()) === 1)
 await device.screenshot({ path: `${OUT}/summary-rex.png` })
 
 // 6 — sort picker on Results

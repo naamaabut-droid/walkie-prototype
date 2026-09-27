@@ -123,6 +123,7 @@ export function useApp() {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [saved, setSaved] = useState<string[]>([])
+  const [photo, setPhotoUrl] = useState<string | null>(null)
   const [walkerId, setWalkerId] = useState('maya')
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
   const [frequency, setFrequency] = useState('Weekly')
@@ -214,6 +215,14 @@ export function useApp() {
     answer,
     summary,
     dogName,
+    photo,
+    /** Object URLs have to be released, or every replacement leaks the last one. */
+    setPhoto: (file: File | null) => {
+      setPhotoUrl((old) => {
+        if (old) URL.revokeObjectURL(old)
+        return file ? URL.createObjectURL(file) : null
+      })
+    },
     dogSize: dogSize.replace('Large · 18–45 kg', 'Large, 28 kg'),
     saved,
     toggleSave: (id: string) =>
