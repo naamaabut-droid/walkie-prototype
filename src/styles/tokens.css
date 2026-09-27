@@ -1,0 +1,111 @@
+/* Generated from Figma file 7iPVK36aRKGHBb8hsURLwB.
+   Collections: "Colors" (the wireframe palette) and "Walkie Tokens" (semantic).
+   Do not hand-edit values — re-export from Figma instead. */
+
+:root {
+  /* ---- Colors / neutral (wireframe palette) ---- */
+  --neutral-900: #3a3733;
+  --neutral-700: #5e5a53;
+  --neutral-500: #8b867e;
+  --neutral-300: #c9c5bd;
+  --neutral-200: #dcd9d3;
+  --neutral-100: #e8e6e1;
+  --neutral-50:  #f7f6f4;
+  --neutral-0:   #ffffff;
+
+  --green-600: #2f6b4f;
+  --green-50:  #e6f0ea;
+  --amber-600: #8a5a12;
+  --amber-50:  #fdf3e0;
+  --red-600:   #a83a22;
+  --red-50:    #fae6e1;
+
+  --overlay-dark:   rgba(0, 0, 0, 0.36);
+  --overlay-subtle: rgba(0, 0, 0, 0.10);
+
+  /* ---- Walkie Tokens / semantic ---- */
+  --bg-canvas:  #faf7f2;
+  --bg-surface: #ffffff;
+  --bg-sunken:  #f2ede5;
+  --bg-inverse: #1b1a17;
+
+  --text-primary:    #1b1a17;
+  --text-secondary:  #6b6459;
+  --text-tertiary:   #9a9287;
+  --text-on-primary: #ffffff;
+  --text-on-inverse: #faf7f2;
+
+  --border-default: #e4ddd1;
+  --border-strong:  #cfc5b4;
+  --border-focus:   #c2512e;
+
+  --brand-primary:       #c2512e;
+  --brand-primary-hover: #a64426;
+  --brand-subtle:        #fbede8;
+  --brand-on-subtle:     #8f3a20;
+
+  --fit-solid:  #2f6b4f;
+  --fit-subtle: #e6f0ea;
+  --fit-text:   #245740;
+  --nofit-subtle: #f7e9e7;
+  --nofit-text:   #8c3a2c;
+  --notice-subtle: #fdf3e0;
+  --notice-text:   #8a5a12;
+  --star: #c79a2e;
+
+  /* ---- Wireframe surface (what this prototype renders) ---- */
+  --wire-fill: #e8e6e1;
+  --wire-line: #c9c5bd;
+  --wire-text: #4a463f;
+
+  /* ---- space/* ---- */
+  --space-2: 2px;   --space-4: 4px;   --space-8: 8px;   --space-12: 12px;
+  --space-16: 16px; --space-20: 20px; --space-24: 24px; --space-32: 32px;
+  --space-40: 40px; --space-48: 48px; --space-64: 64px;
+
+  /* ---- radius/* ---- */
+  --radius-4: 4px;   --radius-8: 8px;   --radius-12: 12px;
+  --radius-16: 16px; --radius-20: 20px; --radius-24: 24px;
+  --radius-full: 999px;
+
+  /* ---- device ---- */
+  --screen-w: 390px;
+  --screen-h: 844px;
+}
+
+/* ---- Text styles, one class per Figma style ----
+   Named exactly as the style: Wireframes/Title/13 -> .t-title-13  */
+
+.t-display-62 { font: 700 62px/74px Inter, system-ui, sans-serif; }
+.t-display-28 { font: 400 28px/1.2 Inter, system-ui, sans-serif; }
+
+.t-heading-24 { font: 700 24px/32px Inter, system-ui, sans-serif; }
+.t-heading-22 { font: 700 22px/32px Inter, system-ui, sans-serif; }
+.t-heading-20 { font: 700 20px/28px Inter, system-ui, sans-serif; }
+.t-heading-18 { font: 700 18px/26px Inter, system-ui, sans-serif; }
+.t-heading-16 { font: 700 16px/22px Inter, system-ui, sans-serif; }
+.t-heading-14 { font: 700 14px/20px Inter, system-ui, sans-serif; }
+.t-heading-11 { font: 700 11px/16px Inter, system-ui, sans-serif; }
+.t-heading-10 { font: 700 10px/15px Inter, system-ui, sans-serif; }
+
+.t-title-20 { font: 600 20px/26px Inter, system-ui, sans-serif; }
+.t-title-16 { font: 600 16px/22px Inter, system-ui, sans-serif; }
+.t-title-14 { font: 600 14px/20px Inter, system-ui, sans-serif; }
+.t-title-13 { font: 600 13px/19px Inter, system-ui, sans-serif; }
+.t-title-12 { font: 600 12px/17px Inter, system-ui, sans-serif; }
+.t-title-11 { font: 600 11px/15px Inter, system-ui, sans-serif; }
+.t-title-10 { font: 600 10px/13px Inter, system-ui, sans-serif; }
+
+.t-body-16 { font: 400 16px/24px Inter, system-ui, sans-serif; }
+.t-body-14 { font: 400 14px/20px Inter, system-ui, sans-serif; }
+.t-body-13 { font: 400 13px/18px Inter, system-ui, sans-serif; }
+.t-body-12 { font: 400 12px/17px Inter, system-ui, sans-serif; }
+.t-body-11 { font: 400 11px/16px Inter, system-ui, sans-serif; }
+.t-body-10 { font: 400 10px/14px Inter, system-ui, sans-serif; }
+
+.t-label-13 { font: 500 13px/19px Inter, system-ui, sans-serif; }
+.t-label-12 { font: 500 12px/17px Inter, system-ui, sans-serif; }
+.t-label-11 { font: 500 11px/15px Inter, system-ui, sans-serif; }
+.t-label-10 { font: 500 10px/15px Inter, system-ui, sans-serif; }
+
+.t-eyebrow-11 { font: 600 11px/14px Inter, system-ui, sans-serif; letter-spacing: 0.6px; }
