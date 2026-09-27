@@ -139,6 +139,57 @@ check(
 )
 await device.screenshot({ path: `${OUT}/book.png` })
 
+// 9 — the questionnaire is required, and finishing it does not hijack the flow
+await page.reload({ waitUntil: 'networkidle' })
+await page.waitForTimeout(400)
+check(
+  'Home starts without a dog profile',
+  (await page.locator('.field', { hasText: 'For' }).innerText()).includes('Add Dog Details'),
+)
+await page.getByRole('button', { name: /Find a walker/ }).click()
+await page.waitForTimeout(600)
+check(
+  'Find a walker opens the questionnaire when the profile is missing',
+  (await page.locator('.device').innerText()).includes('Step 1 of 9'),
+)
+
+// answer only the required questions, then finish
+const nameField = page.locator('input[type="text"], input:not([type])').first()
+await nameField.fill('Louie')
+for (let i = 0; i < 8; i++) {
+  const opts = page.locator('.option')
+  if ((await opts.count()) > 0) await opts.first().click()
+  await page.waitForTimeout(150)
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.waitForTimeout(220)
+}
+await page.getByRole('button', { name: 'Save', exact: true }).click()
+await page.waitForTimeout(600)
+const savedScreen = await page.locator('.device').innerText()
+check('The questionnaire ends on the saved screen', savedScreen.includes('Dog Details Saved'))
+check('Save is the primary action, matches the quieter one', savedScreen.includes('Find matches for'))
+await device.screenshot({ path: `${OUT}/dog-saved-actions.png` })
+
+await page.getByRole('button', { name: 'Save', exact: true }).click()
+await page.waitForTimeout(700)
+check(
+  'Saving returns to Home, not to results',
+  (await page.locator('.device').innerText()).includes('Need a walk today?'),
+)
+check(
+  'Home now carries the dog',
+  (await page.locator('.field', { hasText: 'For' }).innerText()).includes('Louie'),
+)
+
+// with a profile, the same button now searches
+await page.getByRole('button', { name: /Find a walker/ }).click()
+await page.waitForTimeout(700)
+check(
+  'With a profile, Find a walker goes to the results',
+  (await page.locator('.device').innerText()).includes('Matched for Louie'),
+)
+
+
 const failed = results.filter((r) => !r.pass)
 console.log(JSON.stringify({ results, failed: failed.length, consoleErrors }, null, 2))
 await browser.close()

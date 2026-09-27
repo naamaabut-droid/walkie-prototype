@@ -34,7 +34,7 @@ export function Home({ app }: { app: AppState }) {
           <Field
             label="For"
             value={app.dogComplete ? app.dogName : 'Add Dog Details'}
-            onClick={() => app.go('wizard')}
+            onClick={app.openWizard}
           />
           <Field
             label="Near"
@@ -51,7 +51,7 @@ export function Home({ app }: { app: AppState }) {
           <button
             className="btn btn--primary t-title-14"
             style={{ borderRadius: 10, padding: '14px 0' }}
-            onClick={() => app.go(app.dogComplete ? 'results' : 'wizard')}
+            onClick={() => (app.dogComplete ? app.go('results') : app.openWizard())}
           >
             🔍&nbsp;&nbsp;Find a walker
           </button>

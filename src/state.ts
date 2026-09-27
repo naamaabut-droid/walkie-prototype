@@ -217,12 +217,23 @@ export function useApp() {
     go(next)
   }
 
+  /**
+   * The questionnaire is required to search, so "Find a walker" opens it — but at
+   * the first question still unanswered, not back at the beginning.
+   */
+  const openWizard = () => {
+    const first = STEPS.findIndex((s) => s.required && !answers[s.id])
+    setStep(first === -1 ? 0 : first)
+    go('wizard')
+  }
+
   return {
     route,
     transition,
     go,
     jumpTo,
     back,
+    openWizard,
     dogComplete,
     step,
     nextStep,

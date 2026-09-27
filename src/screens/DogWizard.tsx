@@ -34,7 +34,7 @@ export function DogWizard({ app }: { app: AppState }) {
       footer={
         <div className="stack" style={{ gap: 10, padding: '10px 18px 24px' }}>
           <Button onClick={() => (last ? app.go('dogSaved') : app.nextStep())}>
-            {last ? 'Save and find walkers' : 'Continue'}
+            {last ? 'Save' : 'Continue'}
           </Button>
           {step.skippable ? (
             <Button variant="ghost" onClick={() => (last ? app.go('dogSaved') : app.nextStep())}>
@@ -233,10 +233,16 @@ export function DogSaved({ app }: { app: AppState }) {
     <Screen
       footer={
         <div className="stack" style={{ gap: 9, padding: '10px 18px 24px' }}>
-          <Button onClick={() => app.go('results')}>Show Matches</Button>
-          <Button variant="ghost" onClick={() => app.go('wizard')}>
-            Back To Editing
+          {/* Finishing the questionnaire is not the same as asking to search. The
+              profile is saved and the user goes back to where they were; looking
+              for matches straight away is offered, one step quieter. */}
+          <Button onClick={() => app.go('home')}>Save</Button>
+          <Button variant="secondary" onClick={() => app.go('results')}>
+            Find matches for {app.dogName}
           </Button>
+          <button className="t-title-13 muted center" onClick={() => app.go('wizard')}>
+            Back to editing
+          </button>
         </div>
       }
     >
