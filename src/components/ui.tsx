@@ -65,12 +65,15 @@ export function Field({
   label,
   value,
   icon,
+  tag,
   onClick,
 }: {
   label: string
   value: string
   /** sits with the value, so the field says what kind of value it holds */
   icon?: ReactNode
+  /** a small marker on the value, e.g. DEFAULT */
+  tag?: string
   onClick?: () => void
 }) {
   const inner = (
@@ -79,6 +82,7 @@ export function Field({
       <span className="field__value t-body-13 row" style={{ gap: 7 }}>
         {icon ? <span className="field__icon">{icon}</span> : null}
         {value}
+        {tag ? <span className="field__tag t-title-10">{tag}</span> : null}
       </span>
     </>
   )

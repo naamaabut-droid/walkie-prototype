@@ -37,9 +37,10 @@ export function Home({ app }: { app: AppState }) {
             onClick={() => (app.dogs.length > 0 ? app.openSheet('dog') : app.openWizard())}
           />
           <Field
-            label="Near"
-            value={app.nearLabel}
-            icon={<PinIcon />}
+            label="Pickup Address"
+            value={app.addressShort || 'Add Address'}
+            icon={app.addressShort ? <PinIcon /> : undefined}
+            tag={app.addressShort && app.addressIsDefault ? 'DEFAULT' : undefined}
             onClick={() => app.openSheet('near')}
           />
           <Field

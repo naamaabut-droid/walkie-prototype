@@ -397,3 +397,43 @@ textarea::placeholder { color: var(--neutral-500); }
   background: var(--neutral-100);
   color: var(--neutral-700);
 }
+
+/* ---- a switch row, the pattern the Filters screen already uses ---- */
+.switchrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  width: 100%;
+  margin-top: var(--space-16);
+  padding: 12px 14px;
+  border-radius: var(--radius-12);
+  border: 1px solid var(--neutral-300);
+  background: var(--neutral-0);
+  text-align: left;
+}
+.switch {
+  width: 42px;
+  height: 24px;
+  flex: none;
+  padding: 3px;
+  border-radius: var(--radius-full);
+  background: var(--neutral-300);
+  display: flex;
+  justify-content: flex-start;
+  transition: background 160ms ease, justify-content 160ms ease;
+}
+.switch[data-on] { background: var(--neutral-900); justify-content: flex-end; }
+.switch__knob {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--neutral-0);
+}
+
+.field__tag {
+  padding: 2px 6px;
+  border-radius: var(--radius-4);
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+  letter-spacing: 0.4px;
+}

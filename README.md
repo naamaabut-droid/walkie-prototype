@@ -57,11 +57,14 @@ tools/shoot.mjs         screenshots every route headlessly — how this was chec
 
 Nothing here is a picture of a control.
 
-- **`Near` and `Pickup address` open one address form**, asked the way an online delivery form asks:
+- **`Pickup Address` opens one address form**, shared with the booking screen and asked the way an
+  online delivery form asks:
   city, postcode, neighbourhood, street, number, entrance, apartment, floor, entry code and
   directions — required fields marked, and every empty field carrying an example rather than sitting
-  blank. One button above it fills the lot from the device's location. Both fields carry a location pin.
-  One address, two readings: Home shows the area, the booking screen shows the door. Entering it
+  blank. It starts **empty**: Home reads *Add Address* until there is one. One button above the form
+  fills the lot from the device's location, and a **Save as my default address** switch marks it, so
+  Home shows a `DEFAULT` tag once it is set.
+  One address, two readings: Home shows the street, the booking screen shows the door. Entering it
   twice would be exactly the friction this flow argues against.
 - **The dog's photo uploads for real** — it opens the file picker (camera on a phone), previews
   what you chose, offers Replace and Remove, and the same image is what the saved profile shows.
@@ -95,7 +98,7 @@ Two scripts, both against the running app:
   sticks, the picker writes back, the wizard reaches the summary, the sort changes, the heart
   toggles, the photo uploads and reaches the saved screen, and the booking screen carries both the
   chosen time and the entrance, apartment and floor, and that the dog picker holds exactly the dogs
-  that were saved. 33 checks, 0 console errors.
+  that were saved. 37 checks, 0 console errors.
 
 Every screen was compared against its Figma frame in a render, not by reading the code.
 

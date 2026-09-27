@@ -17,10 +17,14 @@ const results = []
 const check = (name, pass, detail = '') => results.push({ name, pass, detail })
 const device = page.locator('.device')
 
-// 1 — "Near" opens the address form; empty fields carry placeholders
-await page.getByText('Near', { exact: true }).click()
+// 1 — "Pickup Address" starts empty and opens the address form
+check(
+  'Pickup Address starts empty',
+  (await page.locator('.field', { hasText: 'Pickup Address' }).innerText()).includes('Add Address'),
+)
+await page.getByText('Pickup Address', { exact: true }).click()
 await page.waitForTimeout(500)
-check('Near opens the address form', await page.locator('.formgrid').isVisible())
+check('It opens the address form', await page.locator('.formgrid').isVisible())
 check('The autocomplete is gone', (await page.locator('.combo').count()) === 0)
 await device.screenshot({ path: `${OUT}/address-sheet.png` })
 
@@ -28,19 +32,31 @@ const fields = page.locator('.formgrid input')
 const placeholders = await fields.evaluateAll((els) => els.map((e) => e.placeholder))
 check('Every field has a placeholder', placeholders.every(Boolean), placeholders.join(', '))
 const apt = fields.nth(6)
-check('Empty fields are empty, so the placeholder shows', (await apt.inputValue()) === '')
+const values = await fields.evaluateAll((els) => els.map((e) => e.value))
+check('Every field starts empty', values.every((v) => v === ''), values.join('|'))
 
-// 1b — the structured fields take typing and reach the booking screen
+// 1b — the structured fields take typing, and the default toggle works
+await fields.nth(0).fill('Tel Aviv')
+await fields.nth(2).fill('Florentin')
+await fields.nth(3).fill('Vital')
+await fields.nth(4).fill('12')
 await fields.nth(5).fill('B')
 await apt.fill('7')
 await fields.nth(7).fill('3')
+await page.getByRole('switch', { name: /default address/ }).click()
 await page.waitForTimeout(200)
+check('The default toggle turns on', (await page.locator('.switch[data-on]').count()) === 1)
 await device.screenshot({ path: `${OUT}/address-filled.png` })
 await page.getByRole('button', { name: 'Save address' }).click()
 await page.waitForTimeout(500)
 
+const homeAddress = await page.locator('.field', { hasText: 'Pickup Address' }).innerText()
+check('The address reaches the Home field', homeAddress.includes('12 Vital, Florentin'), homeAddress)
+check('…and it is marked as the default', homeAddress.includes('DEFAULT'))
+await device.screenshot({ path: `${OUT}/home-address-filled.png` })
+
 // 1c — current location fills the form
-await page.getByText('Near', { exact: true }).click()
+await page.getByText('Pickup Address', { exact: true }).click()
 await page.waitForTimeout(450)
 await page.locator('.formgrid input').first().fill('')
 await page.getByRole('button', { name: /current location/ }).click()

@@ -93,12 +93,16 @@ export function WhenPicker({
 export function AddressSheet({
   title,
   address,
+  isDefault,
   onChange,
+  onDefaultChange,
   onDismiss,
 }: {
   title: string
   address: Address
+  isDefault: boolean
   onChange: (next: Address) => void
+  onDefaultChange: (v: boolean) => void
   onDismiss: () => void
 }) {
   const [locating, setLocating] = useState(false)
@@ -147,7 +151,22 @@ export function AddressSheet({
         />
       </div>
 
-      <div style={{ paddingTop: 16 }}>
+      <button
+        className="switchrow"
+        role="switch"
+        aria-checked={isDefault}
+        onClick={() => onDefaultChange(!isDefault)}
+      >
+        <span className="stack grow" style={{ gap: 2, textAlign: 'left' }}>
+          <span className="t-title-13">Save as my default address</span>
+          <span className="t-body-11 muted">Filled in for you on every walk from now on.</span>
+        </span>
+        <span className="switch" data-on={isDefault || undefined}>
+          <span className="switch__knob" />
+        </span>
+      </button>
+
+      <div style={{ paddingTop: 14 }}>
         <Button onClick={onDismiss}>Save address</Button>
       </div>
     </Sheet>

@@ -111,12 +111,13 @@ const DEFAULT_FORM: Form = {
   sort: 'Best match',
 }
 
+/** Empty on purpose: the Home field starts as "Add Address". */
 const DEFAULT_ADDRESS: Address = {
-  city: 'Tel Aviv',
+  city: '',
   postcode: '',
-  area: 'Florentin',
-  street: 'Vital',
-  number: '12',
+  area: '',
+  street: '',
+  number: '',
   entrance: '',
   apt: '',
   floor: '',
@@ -142,6 +143,7 @@ export function useApp() {
   const [transition, setTransition] = useState<Transition>('forward')
   const [form, setForm] = useState<Form>(DEFAULT_FORM)
   const [address, setAddress] = useState<Address>(DEFAULT_ADDRESS)
+  const [addressIsDefault, setAddressIsDefault] = useState(false)
   const [sheet, setSheet] = useState<SheetKind>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [step, setStep] = useState(0)
@@ -364,7 +366,13 @@ export function useApp() {
      */
     address,
     setAddress,
-    nearLabel: [address.area, address.city].filter(Boolean).join(', ') || 'Add an address',
+    addressIsDefault,
+    setAddressIsDefault,
+    /** what the Home row shows: the street, once there is one */
+    addressShort:
+      [[address.number, address.street].filter(Boolean).join(' '), address.area]
+        .filter(Boolean)
+        .join(', ') || '',
     addressLabel:
       [
         [address.number, address.street].filter(Boolean).join(' '),
@@ -374,7 +382,7 @@ export function useApp() {
         address.area,
       ]
         .filter(Boolean)
-        .join(' · ') || 'Add an address',
+        .join(' · ') || 'Add Address',
     setWhen: (day: string, time: string) => setForm((f) => ({ ...f, day, time })),
     whenLabel: `${form.day} · ${form.time}`,
 

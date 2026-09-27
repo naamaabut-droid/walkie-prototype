@@ -98,9 +98,11 @@ export default function App() {
           ) : null}
           {app.sheet === 'near' || app.sheet === 'address' ? (
             <AddressSheet
-              title={app.sheet === 'near' ? 'Where does the walk start?' : 'Pickup address'}
+              title="Pickup address"
               address={app.address}
+              isDefault={app.addressIsDefault}
               onChange={app.setAddress}
+              onDefaultChange={app.setAddressIsDefault}
               onDismiss={app.closeSheet}
             />
           ) : null}
