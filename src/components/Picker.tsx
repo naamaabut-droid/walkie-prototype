@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Sheet } from './Sheet'
-import type { Address, Suggestion } from '../state'
+import type { Address } from '../state'
 import { Button } from './ui'
 
 /** A single-column chooser in a bottom sheet — walk length, sort order. */
@@ -85,41 +85,30 @@ export function WhenPicker({
 }
 
 /**
- * The address. Typing drives an autocomplete whose first row is always the
- * device's own location, and the structured fields underneath are what a walker
- * actually needs to find a door: city, street, number, apartment, floor.
+ * The address, the way an online delivery form asks for it: every field a walker
+ * needs to reach a door, each with an example in it while it is empty. No
+ * autocomplete — a suggestion list over a handful of invented streets would be
+ * a decoration, not a service.
  */
 export function AddressSheet({
   title,
   address,
-  suggestions,
   onChange,
   onDismiss,
 }: {
   title: string
   address: Address
-  suggestions: Suggestion[]
   onChange: (next: Address) => void
   onDismiss: () => void
 }) {
-  const [query, setQuery] = useState('')
-  const [open, setOpen] = useState(false)
   const [locating, setLocating] = useState(false)
-
-  const q = query.trim().toLowerCase()
-  const matches = q
-    ? suggestions.filter((s) => (s.street + ' ' + s.area).toLowerCase().includes(q))
-    : suggestions.slice(0, 4)
-
   const set = (patch: Partial<Address>) => onChange({ ...address, ...patch })
 
   const useCurrent = () => {
     setLocating(true)
     window.setTimeout(() => {
       setLocating(false)
-      set({ city: 'Tel Aviv', area: 'Florentin', street: 'Vital', number: '12' })
-      setQuery('')
-      setOpen(false)
+      set({ city: 'Tel Aviv', area: 'Florentin', street: 'Vital', number: '12', postcode: '6608315' })
     }, 700)
   }
 
@@ -130,95 +119,35 @@ export function AddressSheet({
         <span className="t-body-12 muted">The walker comes to your door.</span>
       </div>
 
-      <div className="combo">
-        <span className="combo__icon">
-          <PinIcon />
+      <button className="locate" onClick={useCurrent} disabled={locating}>
+        <span className="locate__icon" data-busy={locating || undefined}>
+          <CrosshairIcon />
         </span>
-        <input
-          className="t-body-13 combo__input"
-          value={query}
-          placeholder="Start typing a street"
-          onFocus={() => setOpen(true)}
-          onChange={(e) => {
-            setQuery(e.target.value)
-            setOpen(true)
-          }}
-        />
-        {open ? (
-          <button className="combo__close t-label-11 muted" onClick={() => setOpen(false)}>
-            Close
-          </button>
-        ) : null}
-      </div>
-
-      {open ? (
-        <div className="suggest">
-          <button className="suggest__row suggest__row--first" onClick={useCurrent} disabled={locating}>
-            <span className="suggest__icon" data-busy={locating || undefined}>
-              <CrosshairIcon />
-            </span>
-            <span className="stack" style={{ gap: 1, textAlign: 'left' }}>
-              <span className="t-title-13">
-                {locating ? 'Finding you…' : 'Use my current location'}
-              </span>
-              <span className="t-body-11 muted">
-                {locating ? 'One moment' : 'Florentin, Tel Aviv'}
-              </span>
-            </span>
-          </button>
-
-          {matches.map((m) => (
-            <button
-              key={m.street + m.area}
-              className="suggest__row"
-              onClick={() => {
-                set({ city: m.city, area: m.area, street: m.street })
-                setQuery('')
-                setOpen(false)
-              }}
-            >
-              <span className="suggest__icon">
-                <PinIcon />
-              </span>
-              <span className="stack" style={{ gap: 1, textAlign: 'left' }}>
-                <span className="t-title-13">{m.street}</span>
-                <span className="t-body-11 muted">
-                  {m.area}, {m.city}
-                </span>
-              </span>
-            </button>
-          ))}
-
-          {matches.length === 0 ? (
-            <span className="t-body-12 muted" style={{ padding: '12px 14px', display: 'block' }}>
-              No street here matches “{query.trim()}”. Fill it in below.
-            </span>
-          ) : null}
-        </div>
-      ) : null}
+        <span className="t-title-13">
+          {locating ? 'Finding you…' : 'Fill from my current location'}
+        </span>
+      </button>
 
       <div className="formgrid">
-        <Input label="City" value={address.city} onChange={(v) => set({ city: v })} span={3} />
+        <Input label="City" value={address.city} onChange={(v) => set({ city: v })} span={2} required placeholder="Tel Aviv" />
+        <Input label="Postcode" value={address.postcode} onChange={(v) => set({ postcode: v })} span={1} placeholder="6608315" />
+        <Input label="Neighbourhood" value={address.area} onChange={(v) => set({ area: v })} span={3} required placeholder="Florentin" />
+        <Input label="Street" value={address.street} onChange={(v) => set({ street: v })} span={2} required placeholder="Vital" />
+        <Input label="No." value={address.number} onChange={(v) => set({ number: v })} span={1} required placeholder="12" />
+        <Input label="Entrance" value={address.entrance} onChange={(v) => set({ entrance: v })} span={1} placeholder="B" />
+        <Input label="Apartment" value={address.apt} onChange={(v) => set({ apt: v })} span={1} placeholder="4" />
+        <Input label="Floor" value={address.floor} onChange={(v) => set({ floor: v })} span={1} placeholder="2" />
+        <Input label="Entry code" value={address.entry} onChange={(v) => set({ entry: v })} span={1} placeholder="1234" />
         <Input
-          label="Neighbourhood"
-          value={address.area}
-          onChange={(v) => set({ area: v })}
-          span={3}
-        />
-        <Input label="Street" value={address.street} onChange={(v) => set({ street: v })} span={2} />
-        <Input label="No." value={address.number} onChange={(v) => set({ number: v })} span={1} />
-        <Input label="Apartment" value={address.apt} onChange={(v) => set({ apt: v })} span={1} />
-        <Input label="Floor" value={address.floor} onChange={(v) => set({ floor: v })} span={1} />
-        <Input
-          label="Code"
-          value={address.entry}
-          onChange={(v) => set({ entry: v })}
-          span={1}
-          optional
+          label="Directions"
+          value={address.directions}
+          onChange={(v) => set({ directions: v })}
+          span={2}
+          placeholder="The gate sticks — lift it"
         />
       </div>
 
-      <div style={{ paddingTop: 14 }}>
+      <div style={{ paddingTop: 16 }}>
         <Button onClick={onDismiss}>Save address</Button>
       </div>
     </Sheet>
@@ -230,21 +159,28 @@ function Input({
   value,
   onChange,
   span,
-  optional = false,
+  required = false,
+  placeholder,
 }: {
   label: string
   value: string
   onChange: (v: string) => void
   span: 1 | 2 | 3
-  optional?: boolean
+  required?: boolean
+  placeholder?: string
 }) {
   return (
     <label className="stack field-block" style={{ gap: 5, gridColumn: `span ${span}` }}>
       <span className="t-eyebrow-11 muted">
         {label.toUpperCase()}
-        {optional ? ' · OPTIONAL' : ''}
+        {required ? <span className="req"> *</span> : null}
       </span>
-      <input className="t-body-13 search" value={value} onChange={(e) => onChange(e.target.value)} />
+      <input
+        className="t-body-13 search"
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </label>
   )
 }

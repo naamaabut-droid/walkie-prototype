@@ -57,10 +57,10 @@ tools/shoot.mjs         screenshots every route headlessly — how this was chec
 
 Nothing here is a picture of a control.
 
-- **`Near` and `Pickup address` open one address form.** Typing drives an autocomplete whose
-  **first row is always *Use my current location*** — with a short locating state before it answers.
-  Under it are the fields a walker actually needs to find a door: city, neighbourhood, street,
-  number, apartment, floor, entry code. Both fields carry a location pin.
+- **`Near` and `Pickup address` open one address form**, asked the way an online delivery form asks:
+  city, postcode, neighbourhood, street, number, entrance, apartment, floor, entry code and
+  directions — required fields marked, and every empty field carrying an example rather than sitting
+  blank. One button above it fills the lot from the device's location. Both fields carry a location pin.
   One address, two readings: Home shows the area, the booking screen shows the door. Entering it
   twice would be exactly the friction this flow argues against.
 - **The dog's photo uploads for real** — it opens the file picker (camera on a phone), previews
@@ -88,7 +88,7 @@ Two scripts, both against the running app:
 - `node tools/probe.mjs <dir>` — drives the actual controls and asserts the state changed: typing
   sticks, the picker writes back, the wizard reaches the summary, the sort changes, the heart
   toggles, the photo uploads and reaches the saved screen, and the booking screen carries both the
-  chosen time and the apartment and floor. 19 checks, 0 console errors.
+  chosen time and the entrance, apartment and floor. 17 checks, 0 console errors.
 
 Every screen was compared against its Figma frame in a render, not by reading the code.
 

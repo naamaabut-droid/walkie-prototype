@@ -17,49 +17,37 @@ const results = []
 const check = (name, pass, detail = '') => results.push({ name, pass, detail })
 const device = page.locator('.device')
 
-// 1 — "Near" opens the address form with an autocomplete
+// 1 — "Near" opens the address form; empty fields carry placeholders
 await page.getByText('Near', { exact: true }).click()
 await page.waitForTimeout(500)
 check('Near opens the address form', await page.locator('.formgrid').isVisible())
+check('The autocomplete is gone', (await page.locator('.combo').count()) === 0)
 await device.screenshot({ path: `${OUT}/address-sheet.png` })
 
-await page.locator('.combo__input').fill('shab')
-await page.waitForTimeout(250)
-const rows = await page.locator('.suggest__row').count()
-check('Autocomplete filters, current location stays first', rows === 2, `${rows} rows`)
-check(
-  'Current location is the first row',
-  (await page.locator('.suggest__row').first().innerText()).includes('Use my current location'),
-)
-await device.screenshot({ path: `${OUT}/address-autocomplete.png` })
+const fields = page.locator('.formgrid input')
+const placeholders = await fields.evaluateAll((els) => els.map((e) => e.placeholder))
+check('Every field has a placeholder', placeholders.every(Boolean), placeholders.join(', '))
+const apt = fields.nth(6)
+check('Empty fields are empty, so the placeholder shows', (await apt.inputValue()) === '')
 
-await page.getByRole('button', { name: /Shabazi/ }).click()
-await page.waitForTimeout(300)
-check(
-  'Picking a street fills the form',
-  (await page.locator('.formgrid input').nth(1).inputValue()) === 'Neve Tzedek',
-)
-
-// 1b — the structured fields take typing, and reach the booking screen
-await page.locator('.formgrid input').nth(4).fill('7')
-await page.locator('.formgrid input').nth(5).fill('3')
+// 1b — the structured fields take typing and reach the booking screen
+await fields.nth(5).fill('B')
+await apt.fill('7')
+await fields.nth(7).fill('3')
+await page.waitForTimeout(200)
+await device.screenshot({ path: `${OUT}/address-filled.png` })
 await page.getByRole('button', { name: 'Save address' }).click()
 await page.waitForTimeout(500)
-check(
-  'Area reaches the Near field',
-  (await page.locator('.field', { hasText: 'Near' }).innerText()).includes('Neve Tzedek'),
-)
 
-// 1c — the current-location option
+// 1c — current location fills the form
 await page.getByText('Near', { exact: true }).click()
 await page.waitForTimeout(450)
-await page.locator('.combo__input').click()
-await page.waitForTimeout(200)
-await page.getByRole('button', { name: /Use my current location/ }).click()
+await page.locator('.formgrid input').first().fill('')
+await page.getByRole('button', { name: /current location/ }).click()
 await page.waitForTimeout(1100)
 check(
   'Current location fills the form',
-  (await page.locator('.formgrid input').nth(1).inputValue()) === 'Florentin',
+  (await page.locator('.formgrid input').first().inputValue()) === 'Tel Aviv',
 )
 await page.getByRole('button', { name: 'Save address' }).click()
 await page.waitForTimeout(400)
@@ -145,8 +133,10 @@ await page.getByRole('button', { name: 'Book', exact: true }).first().click()
 await page.waitForTimeout(700)
 const book = await page.locator('.device').innerText()
 check('Booking shows the chosen time', book.includes('Tomorrow · 18:00'), book.slice(0, 120))
-check('Booking shows the door, not just the area', book.includes('Apt 7') && book.includes('Floor 3'))
-check('No stray radio circles in the pickers', (await page.locator('.suggest .option__mark').count()) === 0)
+check(
+  'Booking shows the door, not just the area',
+  book.includes('Entrance B') && book.includes('Apt 7') && book.includes('Floor 3'),
+)
 await device.screenshot({ path: `${OUT}/book.png` })
 
 const failed = results.filter((r) => !r.pass)

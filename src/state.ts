@@ -93,15 +93,16 @@ export type Form = {
 /** What a walker needs to find a door, not just a neighbourhood. */
 export type Address = {
   city: string
+  postcode: string
   area: string
   street: string
   number: string
+  entrance: string
   apt: string
   floor: string
   entry: string
+  directions: string
 }
-
-export type Suggestion = { street: string; area: string; city: string }
 
 const DEFAULT_FORM: Form = {
   day: 'Thursday',
@@ -112,23 +113,16 @@ const DEFAULT_FORM: Form = {
 
 const DEFAULT_ADDRESS: Address = {
   city: 'Tel Aviv',
+  postcode: '',
   area: 'Florentin',
   street: 'Vital',
   number: '12',
+  entrance: '',
   apt: '',
   floor: '',
   entry: '',
+  directions: '',
 }
-
-export const STREETS: Suggestion[] = [
-  { street: 'Vital St.', area: 'Florentin', city: 'Tel Aviv' },
-  { street: 'Herzl St.', area: 'Florentin', city: 'Tel Aviv' },
-  { street: 'Shabazi St.', area: 'Neve Tzedek', city: 'Tel Aviv' },
-  { street: 'Rothschild Blvd.', area: 'Lev Ha’ir', city: 'Tel Aviv' },
-  { street: 'Salame St.', area: 'Shapira', city: 'Tel Aviv' },
-  { street: 'Yefet St.', area: 'Jaffa', city: 'Tel Aviv' },
-  { street: 'Ben Yehuda St.', area: 'Tzafon Yashan', city: 'Tel Aviv' },
-]
 
 export const DAYS = ['Today', 'Tomorrow', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 export const TIMES = ['07:00', '08:00', '12:00', '16:00', '16:30', '17:00', '17:30', '18:00', '19:00']
@@ -279,15 +273,17 @@ export function useApp() {
      */
     address,
     setAddress,
-    nearLabel: [address.area, address.city].filter(Boolean).join(', '),
-    addressLabel: [
-      [address.number, address.street].filter(Boolean).join(' '),
-      address.apt ? `Apt ${address.apt}` : '',
-      address.floor ? `Floor ${address.floor}` : '',
-      address.area,
-    ]
-      .filter(Boolean)
-      .join(' · '),
+    nearLabel: [address.area, address.city].filter(Boolean).join(', ') || 'Add an address',
+    addressLabel:
+      [
+        [address.number, address.street].filter(Boolean).join(' '),
+        address.entrance ? `Entrance ${address.entrance}` : '',
+        address.apt ? `Apt ${address.apt}` : '',
+        address.floor ? `Floor ${address.floor}` : '',
+        address.area,
+      ]
+        .filter(Boolean)
+        .join(' · ') || 'Add an address',
     setWhen: (day: string, time: string) => setForm((f) => ({ ...f, day, time })),
     whenLabel: `${form.day} · ${form.time}`,
 

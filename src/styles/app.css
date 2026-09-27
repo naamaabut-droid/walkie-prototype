@@ -289,55 +289,27 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* ---- address sheet ---- */
 .field__icon { display: inline-flex; color: var(--neutral-500); }
 
-.combo {
+.locate {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-8);
+  width: 100%;
   padding: 12px 14px;
   border-radius: var(--radius-12);
   border: 1px solid var(--neutral-900);
   background: var(--neutral-0);
 }
-.combo__icon { display: inline-flex; color: var(--neutral-700); flex: none; }
-.combo__input {
-  flex: 1;
-  min-width: 0;
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: var(--neutral-900);
-  padding: 0;
-}
-.combo__close { flex: none; }
-
-.suggest {
-  margin-top: var(--space-8);
-  border-radius: var(--radius-12);
-  border: 1px solid var(--neutral-300);
-  background: var(--neutral-0);
-  overflow: hidden;
-  max-height: 208px;
-  overflow-y: auto;
-}
-.suggest__row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-12);
-  width: 100%;
-  padding: 11px 14px;
-  text-align: left;
-  border-bottom: 1px solid var(--neutral-100);
-}
-.suggest__row:last-child { border-bottom: 0; }
-.suggest__row:hover { background: var(--neutral-50); }
-.suggest__row--first { background: var(--neutral-50); }
-.suggest__row:disabled { opacity: 0.7; }
-.suggest__icon { display: inline-flex; color: var(--neutral-700); flex: none; }
-.suggest__icon[data-busy] { animation: locate-pulse 700ms ease-in-out infinite; }
+.locate:disabled { opacity: 0.75; }
+.locate__icon { display: inline-flex; color: var(--neutral-900); flex: none; }
+.locate__icon[data-busy] { animation: locate-pulse 700ms ease-in-out infinite; }
 @keyframes locate-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
+
+/* the same warm accent the wizard's REQUIRED chip already uses */
+.req { color: var(--amber-600); }
 
 .formgrid {
   display: grid;

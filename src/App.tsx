@@ -5,7 +5,6 @@ import {
   ORDER,
   SCREEN_TITLES,
   SORTS,
-  STREETS,
   TIMES,
   useApp,
   type Transition,
@@ -100,7 +99,6 @@ export default function App() {
             <AddressSheet
               title={app.sheet === 'near' ? 'Where does the walk start?' : 'Pickup address'}
               address={app.address}
-              suggestions={STREETS}
               onChange={app.setAddress}
               onDismiss={app.closeSheet}
             />
