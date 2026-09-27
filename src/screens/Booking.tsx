@@ -1,5 +1,6 @@
 import { Screen } from '../components/Chrome'
-import { Button, EditableField, Field, Segmented } from '../components/ui'
+import { Button, Field, Segmented } from '../components/ui'
+import { PinIcon } from '../components/Picker'
 import type { AppState } from '../state'
 
 /** F1-6 · Book. Payment is not here on purpose — it is set once, in settings. */
@@ -15,7 +16,11 @@ export function BookWalker({ app }: { app: AppState }) {
       }
     >
       <header className="appbar">
-        <button className="appbar__title t-heading-18 grow" onClick={() => app.back()}>
+        <button
+          className="appbar__title t-heading-18 grow"
+          style={{ textAlign: 'left' }}
+          onClick={() => app.back()}
+        >
           ‹&nbsp;&nbsp;Book {first}
         </button>
       </header>
@@ -35,11 +40,11 @@ export function BookWalker({ app }: { app: AppState }) {
         </div>
 
         <Labelled label="Pickup address">
-          <EditableField
+          <Field
             label=""
-            value={app.form.address}
-            onChange={(v) => app.setField('address', v)}
-            placeholder="Street and number"
+            value={app.addressLabel}
+            icon={<PinIcon />}
+            onClick={() => app.openSheet('address')}
           />
         </Labelled>
         <Labelled label="Day and time">

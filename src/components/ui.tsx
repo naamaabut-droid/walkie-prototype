@@ -64,16 +64,22 @@ export function ChipGroup({
 export function Field({
   label,
   value,
+  icon,
   onClick,
 }: {
   label: string
   value: string
+  /** sits with the value, so the field says what kind of value it holds */
+  icon?: ReactNode
   onClick?: () => void
 }) {
   const inner = (
     <>
       <span className="field__label t-title-13">{label}</span>
-      <span className="field__value t-body-13">{value}</span>
+      <span className="field__value t-body-13 row" style={{ gap: 7 }}>
+        {icon ? <span className="field__icon">{icon}</span> : null}
+        {value}
+      </span>
     </>
   )
   if (!onClick) return <div className="field">{inner}</div>

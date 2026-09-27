@@ -81,43 +81,65 @@ function transitionFor(from: Route, to: Route): Transition {
 }
 
 /** Which chooser is open over the current screen, if any. */
-export type SheetKind = 'when' | 'length' | 'sort' | 'near' | null
+export type SheetKind = 'when' | 'length' | 'sort' | 'near' | 'address' | null
 
 export type Form = {
-  near: string
   day: string
   time: string
   length: string
-  address: string
   sort: string
 }
 
+/** What a walker needs to find a door, not just a neighbourhood. */
+export type Address = {
+  city: string
+  area: string
+  street: string
+  number: string
+  apt: string
+  floor: string
+  entry: string
+}
+
+export type Suggestion = { street: string; area: string; city: string }
+
 const DEFAULT_FORM: Form = {
-  near: 'Florentin, Tel Aviv',
   day: 'Thursday',
   time: '17:00',
   length: '45 min',
-  address: 'Florentin, 12 Vital St.',
   sort: 'Best match',
 }
+
+const DEFAULT_ADDRESS: Address = {
+  city: 'Tel Aviv',
+  area: 'Florentin',
+  street: 'Vital',
+  number: '12',
+  apt: '',
+  floor: '',
+  entry: '',
+}
+
+export const STREETS: Suggestion[] = [
+  { street: 'Vital St.', area: 'Florentin', city: 'Tel Aviv' },
+  { street: 'Herzl St.', area: 'Florentin', city: 'Tel Aviv' },
+  { street: 'Shabazi St.', area: 'Neve Tzedek', city: 'Tel Aviv' },
+  { street: 'Rothschild Blvd.', area: 'Lev Ha’ir', city: 'Tel Aviv' },
+  { street: 'Salame St.', area: 'Shapira', city: 'Tel Aviv' },
+  { street: 'Yefet St.', area: 'Jaffa', city: 'Tel Aviv' },
+  { street: 'Ben Yehuda St.', area: 'Tzafon Yashan', city: 'Tel Aviv' },
+]
 
 export const DAYS = ['Today', 'Tomorrow', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 export const TIMES = ['07:00', '08:00', '12:00', '16:00', '16:30', '17:00', '17:30', '18:00', '19:00']
 export const LENGTHS = ['30 min', '45 min', '60 min', 'Longer']
-export const AREAS = [
-  'Florentin, Tel Aviv',
-  'Neve Tzedek, Tel Aviv',
-  'Shapira, Tel Aviv',
-  'Kerem HaTeimanim, Tel Aviv',
-  'Jaffa, Tel Aviv',
-  'Rothschild, Tel Aviv',
-]
 export const SORTS = ['Best match', 'Nearest', 'Soonest', 'Price, low to high', 'Rating']
 
 export function useApp() {
   const [route, setRoute] = useState<Route>('home')
   const [transition, setTransition] = useState<Transition>('forward')
   const [form, setForm] = useState<Form>(DEFAULT_FORM)
+  const [address, setAddress] = useState<Address>(DEFAULT_ADDRESS)
   const [sheet, setSheet] = useState<SheetKind>(null)
   const [notice, setNotice] = useState<string | null>(null)
   const [step, setStep] = useState(0)
@@ -250,6 +272,22 @@ export function useApp() {
     form,
     setField: <K extends keyof Form>(key: K, value: Form[K]) =>
       setForm((f) => ({ ...f, [key]: value })),
+
+    /**
+     * One address, two readings of it. Home only needs the area; the booking screen
+     * needs the door. Entering it twice would be the kind of friction this flow argues against.
+     */
+    address,
+    setAddress,
+    nearLabel: [address.area, address.city].filter(Boolean).join(', '),
+    addressLabel: [
+      [address.number, address.street].filter(Boolean).join(' '),
+      address.apt ? `Apt ${address.apt}` : '',
+      address.floor ? `Floor ${address.floor}` : '',
+      address.area,
+    ]
+      .filter(Boolean)
+      .join(' · '),
     setWhen: (day: string, time: string) => setForm((f) => ({ ...f, day, time })),
     whenLabel: `${form.day} · ${form.time}`,
 

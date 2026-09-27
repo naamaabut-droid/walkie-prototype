@@ -286,64 +286,67 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   color: var(--text-on-inverse);
 }
 
-/* ---- location picker ----
-   The map is the same wireframe placeholder the Figma flow uses: a surface, a
-   scatter of walkers, and you in the middle. */
-.map {
-  position: relative;
-  height: 150px;
-  border-radius: var(--radius-12);
-  background-color: var(--wire-fill);
-  background-image: radial-gradient(var(--neutral-300) 1.5px, transparent 1.6px);
-  background-size: 34px 30px;
-  border: 1px solid var(--wire-line);
-  margin-bottom: var(--space-12);
-}
-.map__pin {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 14px;
-  height: 14px;
-  margin: -7px 0 0 -7px;
-  border-radius: var(--radius-full);
-  background: var(--neutral-0);
-  border: 3px solid var(--neutral-900);
-  box-shadow: 0 0 0 8px rgba(58, 55, 51, 0.12);
-}
+/* ---- address sheet ---- */
+.field__icon { display: inline-flex; color: var(--neutral-500); }
 
-.locate {
+.combo {
   display: flex;
   align-items: center;
-  gap: var(--space-12);
-  width: 100%;
+  gap: var(--space-8);
   padding: 12px 14px;
   border-radius: var(--radius-12);
   border: 1px solid var(--neutral-900);
   background: var(--neutral-0);
-  margin-bottom: var(--space-8);
 }
-.locate:disabled { opacity: 0.7; }
-.locate__dot {
-  width: 20px;
-  height: 20px;
-  flex: none;
-  border-radius: var(--radius-full);
-  border: 2px solid var(--neutral-900);
-  position: relative;
+.combo__icon { display: inline-flex; color: var(--neutral-700); flex: none; }
+.combo__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--neutral-900);
+  padding: 0;
 }
-.locate__dot::after {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  border-radius: var(--radius-full);
-  background: var(--neutral-900);
+.combo__close { flex: none; }
+
+.suggest {
+  margin-top: var(--space-8);
+  border-radius: var(--radius-12);
+  border: 1px solid var(--neutral-300);
+  background: var(--neutral-0);
+  overflow: hidden;
+  max-height: 208px;
+  overflow-y: auto;
 }
-.locate__dot[data-busy]::after { animation: locate-pulse 700ms ease-in-out infinite; }
+.suggest__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  width: 100%;
+  padding: 11px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--neutral-100);
+}
+.suggest__row:last-child { border-bottom: 0; }
+.suggest__row:hover { background: var(--neutral-50); }
+.suggest__row--first { background: var(--neutral-50); }
+.suggest__row:disabled { opacity: 0.7; }
+.suggest__icon { display: inline-flex; color: var(--neutral-700); flex: none; }
+.suggest__icon[data-busy] { animation: locate-pulse 700ms ease-in-out infinite; }
 @keyframes locate-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.45); opacity: 0.45; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
+
+.formgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: end;
+  gap: var(--space-12) var(--space-8);
+  padding-top: var(--space-16);
+}
+.field-block .search { margin-bottom: 0; }
 
 .search {
   width: 100%;

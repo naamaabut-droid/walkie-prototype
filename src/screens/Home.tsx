@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Screen } from '../components/Chrome'
 import { Field, Segmented } from '../components/ui'
+import { PinIcon } from '../components/Picker'
 import { WalkerCard } from '../components/WalkerCard'
 import { WALKERS } from '../data/walkers'
 import type { AppState } from '../state'
@@ -35,7 +36,12 @@ export function Home({ app }: { app: AppState }) {
             value={app.dogComplete ? app.dogName : 'Add Dog Details'}
             onClick={() => app.go('wizard')}
           />
-          <Field label="Near" value={app.form.near} onClick={() => app.openSheet('near')} />
+          <Field
+            label="Near"
+            value={app.nearLabel}
+            icon={<PinIcon />}
+            onClick={() => app.openSheet('near')}
+          />
           <Field
             label="When"
             value={mode === 'Now' ? 'As soon as possible' : app.whenLabel}

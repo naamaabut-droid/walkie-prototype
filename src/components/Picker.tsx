@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Sheet } from './Sheet'
+import type { Address, Suggestion } from '../state'
 import { Button } from './ui'
 
 /** A single-column chooser in a bottom sheet — walk length, sort order. */
@@ -36,7 +37,7 @@ export function ListPicker({
             }}
           >
             <span className="option__label t-title-14 grow">{o}</span>
-            <span className="option__mark">{o === value ? <span className="t-title-12">✓</span> : null}</span>
+            {o === value ? <span className="t-title-14">✓</span> : null}
           </button>
         ))}
       </div>
@@ -84,85 +85,191 @@ export function WhenPicker({
 }
 
 /**
- * Where the walk starts. A map, the device's own location as the first option,
- * and typing as the fallback — in that order, because the common case is "here".
+ * The address. Typing drives an autocomplete whose first row is always the
+ * device's own location, and the structured fields underneath are what a walker
+ * actually needs to find a door: city, street, number, apartment, floor.
  */
-export function LocationPicker({
-  value,
-  areas,
-  onPick,
+export function AddressSheet({
+  title,
+  address,
+  suggestions,
+  onChange,
   onDismiss,
 }: {
-  value: string
-  areas: string[]
-  onPick: (v: string) => void
+  title: string
+  address: Address
+  suggestions: Suggestion[]
+  onChange: (next: Address) => void
   onDismiss: () => void
 }) {
   const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
   const [locating, setLocating] = useState(false)
-  const matches = areas.filter((a) => a.toLowerCase().includes(query.trim().toLowerCase()))
+
+  const q = query.trim().toLowerCase()
+  const matches = q
+    ? suggestions.filter((s) => (s.street + ' ' + s.area).toLowerCase().includes(q))
+    : suggestions.slice(0, 4)
+
+  const set = (patch: Partial<Address>) => onChange({ ...address, ...patch })
 
   const useCurrent = () => {
     setLocating(true)
     window.setTimeout(() => {
       setLocating(false)
-      onPick('Current location · Florentin')
-      onDismiss()
+      set({ city: 'Tel Aviv', area: 'Florentin', street: 'Vital', number: '12' })
+      setQuery('')
+      setOpen(false)
     }, 700)
   }
 
   return (
     <Sheet onDismiss={onDismiss}>
       <div className="stack" style={{ gap: 4, paddingBottom: 12 }}>
-        <span className="t-heading-18">Where does the walk start?</span>
-        <span className="t-body-12 muted">The walker comes to you.</span>
+        <span className="t-heading-18">{title}</span>
+        <span className="t-body-12 muted">The walker comes to your door.</span>
       </div>
 
-      <div className="map" aria-label="map">
-        <span className="map__pin" />
-      </div>
-
-      <button className="locate" onClick={useCurrent} disabled={locating}>
-        <span className="locate__dot" data-busy={locating || undefined} />
-        <span className="stack grow" style={{ gap: 1, textAlign: 'left' }}>
-          <span className="t-title-13">
-            {locating ? 'Finding you…' : 'Use my current location'}
-          </span>
-          <span className="t-body-11 muted">{locating ? 'One moment' : 'Florentin, Tel Aviv'}</span>
+      <div className="combo">
+        <span className="combo__icon">
+          <PinIcon />
         </span>
-      </button>
-
-      <input
-        className="t-body-13 search"
-        value={query}
-        placeholder="Or search a street or neighbourhood"
-        onChange={(e) => setQuery(e.target.value)}
-      />
-
-      <div className="stack" style={{ gap: 6, maxHeight: 148, overflowY: 'auto' }}>
-        {matches.length === 0 ? (
-          <span className="t-body-12 muted" style={{ padding: '10px 2px' }}>
-            Nothing here matches “{query.trim()}”.
-          </span>
+        <input
+          className="t-body-13 combo__input"
+          value={query}
+          placeholder="Start typing a street"
+          onFocus={() => setOpen(true)}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            setOpen(true)
+          }}
+        />
+        {open ? (
+          <button className="combo__close t-label-11 muted" onClick={() => setOpen(false)}>
+            Close
+          </button>
         ) : null}
-        {matches.map((a) => (
-          <button
-            key={a}
-            className="option"
-            aria-pressed={a === value}
-            onClick={() => {
-              onPick(a)
-              onDismiss()
-            }}
-          >
-            <span className="option__label t-title-14 grow">{a}</span>
-            <span className="option__mark">
-              {a === value ? <span className="t-title-12">✓</span> : null}
+      </div>
+
+      {open ? (
+        <div className="suggest">
+          <button className="suggest__row suggest__row--first" onClick={useCurrent} disabled={locating}>
+            <span className="suggest__icon" data-busy={locating || undefined}>
+              <CrosshairIcon />
+            </span>
+            <span className="stack" style={{ gap: 1, textAlign: 'left' }}>
+              <span className="t-title-13">
+                {locating ? 'Finding you…' : 'Use my current location'}
+              </span>
+              <span className="t-body-11 muted">
+                {locating ? 'One moment' : 'Florentin, Tel Aviv'}
+              </span>
             </span>
           </button>
-        ))}
+
+          {matches.map((m) => (
+            <button
+              key={m.street + m.area}
+              className="suggest__row"
+              onClick={() => {
+                set({ city: m.city, area: m.area, street: m.street })
+                setQuery('')
+                setOpen(false)
+              }}
+            >
+              <span className="suggest__icon">
+                <PinIcon />
+              </span>
+              <span className="stack" style={{ gap: 1, textAlign: 'left' }}>
+                <span className="t-title-13">{m.street}</span>
+                <span className="t-body-11 muted">
+                  {m.area}, {m.city}
+                </span>
+              </span>
+            </button>
+          ))}
+
+          {matches.length === 0 ? (
+            <span className="t-body-12 muted" style={{ padding: '12px 14px', display: 'block' }}>
+              No street here matches “{query.trim()}”. Fill it in below.
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="formgrid">
+        <Input label="City" value={address.city} onChange={(v) => set({ city: v })} span={3} />
+        <Input
+          label="Neighbourhood"
+          value={address.area}
+          onChange={(v) => set({ area: v })}
+          span={3}
+        />
+        <Input label="Street" value={address.street} onChange={(v) => set({ street: v })} span={2} />
+        <Input label="No." value={address.number} onChange={(v) => set({ number: v })} span={1} />
+        <Input label="Apartment" value={address.apt} onChange={(v) => set({ apt: v })} span={1} />
+        <Input label="Floor" value={address.floor} onChange={(v) => set({ floor: v })} span={1} />
+        <Input
+          label="Code"
+          value={address.entry}
+          onChange={(v) => set({ entry: v })}
+          span={1}
+          optional
+        />
+      </div>
+
+      <div style={{ paddingTop: 14 }}>
+        <Button onClick={onDismiss}>Save address</Button>
       </div>
     </Sheet>
+  )
+}
+
+function Input({
+  label,
+  value,
+  onChange,
+  span,
+  optional = false,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  span: 1 | 2 | 3
+  optional?: boolean
+}) {
+  return (
+    <label className="stack field-block" style={{ gap: 5, gridColumn: `span ${span}` }}>
+      <span className="t-eyebrow-11 muted">
+        {label.toUpperCase()}
+        {optional ? ' · OPTIONAL' : ''}
+      </span>
+      <input className="t-body-13 search" value={value} onChange={(e) => onChange(e.target.value)} />
+    </label>
+  )
+}
+
+export function PinIcon() {
+  return (
+    <svg width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden="true">
+      <path
+        d="M7 15s5.5-5.05 5.5-8.5A5.5 5.5 0 0 0 1.5 6.5C1.5 9.95 7 15 7 15Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <circle cx="7" cy="6.4" r="1.9" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  )
+}
+
+function CrosshairIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="8" cy="8" r="6.2" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
+      <path d="M8 0v2.2M8 13.8V16M0 8h2.2M13.8 8H16" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
   )
 }
 

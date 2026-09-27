@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  AREAS,
   DAYS,
   LENGTHS,
   ORDER,
   SCREEN_TITLES,
   SORTS,
+  STREETS,
   TIMES,
   useApp,
   type Transition,
@@ -17,7 +17,7 @@ import { Filters } from './screens/Filters'
 import { WalkerProfile } from './screens/WalkerProfile'
 import { BookWalker, PushAccepted, RequestSent } from './screens/Booking'
 import { Sheet } from './components/Sheet'
-import { ListPicker, LocationPicker, WhenPicker } from './components/Picker'
+import { AddressSheet, ListPicker, WhenPicker } from './components/Picker'
 import { Button } from './components/ui'
 import './styles/app.css'
 
@@ -96,11 +96,12 @@ export default function App() {
               onDismiss={app.closeSheet}
             />
           ) : null}
-          {app.sheet === 'near' ? (
-            <LocationPicker
-              value={app.form.near}
-              areas={AREAS}
-              onPick={(v) => app.setField('near', v)}
+          {app.sheet === 'near' || app.sheet === 'address' ? (
+            <AddressSheet
+              title={app.sheet === 'near' ? 'Where does the walk start?' : 'Pickup address'}
+              address={app.address}
+              suggestions={STREETS}
+              onChange={app.setAddress}
               onDismiss={app.closeSheet}
             />
           ) : null}

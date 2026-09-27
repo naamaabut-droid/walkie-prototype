@@ -17,31 +17,52 @@ const results = []
 const check = (name, pass, detail = '') => results.push({ name, pass, detail })
 const device = page.locator('.device')
 
-// 1 — "Near" opens a map picker, offers the current location, and takes a search
+// 1 — "Near" opens the address form with an autocomplete
 await page.getByText('Near', { exact: true }).click()
 await page.waitForTimeout(500)
-check('Near opens a map picker', await page.locator('.map').isVisible())
-await device.screenshot({ path: `${OUT}/picker-near.png` })
-await page.locator('.search').fill('neve')
-await page.waitForTimeout(200)
-check('Search filters the areas', (await page.locator('.option').count()) === 1)
-await device.screenshot({ path: `${OUT}/picker-near-search.png` })
-await page.getByRole('button', { name: /Neve Tzedek/ }).click()
-await page.waitForTimeout(450)
+check('Near opens the address form', await page.locator('.formgrid').isVisible())
+await device.screenshot({ path: `${OUT}/address-sheet.png` })
+
+await page.locator('.combo__input').fill('shab')
+await page.waitForTimeout(250)
+const rows = await page.locator('.suggest__row').count()
+check('Autocomplete filters, current location stays first', rows === 2, `${rows} rows`)
 check(
-  'Area writes back to the field',
+  'Current location is the first row',
+  (await page.locator('.suggest__row').first().innerText()).includes('Use my current location'),
+)
+await device.screenshot({ path: `${OUT}/address-autocomplete.png` })
+
+await page.getByRole('button', { name: /Shabazi/ }).click()
+await page.waitForTimeout(300)
+check(
+  'Picking a street fills the form',
+  (await page.locator('.formgrid input').nth(1).inputValue()) === 'Neve Tzedek',
+)
+
+// 1b — the structured fields take typing, and reach the booking screen
+await page.locator('.formgrid input').nth(4).fill('7')
+await page.locator('.formgrid input').nth(5).fill('3')
+await page.getByRole('button', { name: 'Save address' }).click()
+await page.waitForTimeout(500)
+check(
+  'Area reaches the Near field',
   (await page.locator('.field', { hasText: 'Near' }).innerText()).includes('Neve Tzedek'),
 )
 
-// 1b — the current-location option
+// 1c — the current-location option
 await page.getByText('Near', { exact: true }).click()
 await page.waitForTimeout(450)
+await page.locator('.combo__input').click()
+await page.waitForTimeout(200)
 await page.getByRole('button', { name: /Use my current location/ }).click()
-await page.waitForTimeout(1200)
+await page.waitForTimeout(1100)
 check(
-  'Current location writes back',
-  (await page.locator('.field', { hasText: 'Near' }).innerText()).includes('Current location'),
+  'Current location fills the form',
+  (await page.locator('.formgrid input').nth(1).inputValue()) === 'Florentin',
 )
+await page.getByRole('button', { name: 'Save address' }).click()
+await page.waitForTimeout(400)
 
 // 2 — "When" opens the day/time picker and the choice sticks
 await page.getByText('When', { exact: true }).click()
@@ -124,6 +145,8 @@ await page.getByRole('button', { name: 'Book', exact: true }).first().click()
 await page.waitForTimeout(700)
 const book = await page.locator('.device').innerText()
 check('Booking shows the chosen time', book.includes('Tomorrow · 18:00'), book.slice(0, 120))
+check('Booking shows the door, not just the area', book.includes('Apt 7') && book.includes('Floor 3'))
+check('No stray radio circles in the pickers', (await page.locator('.suggest .option__mark').count()) === 0)
 await device.screenshot({ path: `${OUT}/book.png` })
 
 const failed = results.filter((r) => !r.pass)
