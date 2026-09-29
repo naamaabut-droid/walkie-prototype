@@ -156,14 +156,14 @@ export default function App() {
           {app.route === 'waiting' ? (
             <Sheet onDismiss={() => app.go('push')}>
               <div className="stack" style={{ gap: 8, paddingBottom: 14 }}>
-                <span className="t-heading-18">Want notifications?</span>
-                <span className="t-body-13 dim">
+                <span className="t-heading-20">Want notifications?</span>
+                <span className="t-body-14 dim">
                   Want to know the moment {app.walker.name.split(' ')[0]} answers? You can keep up
                   to date on your booking, live.
                 </span>
               </div>
               <div className="stack" style={{ gap: 10 }}>
-                <Button onClick={() => app.go('push')}>Allow notifications</Button>
+                <Button onClick={() => app.go('push')}>Allow Notifications</Button>
                 <Button variant="secondary" onClick={() => app.go('push')}>
                   Not Now
                 </Button>
@@ -185,7 +185,9 @@ function Router({ app }: { app: ReturnType<typeof useApp> }) {
     case 'dogSaved':
       return <DogSaved app={app} />
     case 'results':
-      return <Results app={app} />
+      return <Results app={app} filtered={false} />
+    case 'filtered':
+      return <Results app={app} filtered />
     case 'filters':
       return <Filters app={app} />
     case 'profile':

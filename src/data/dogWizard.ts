@@ -29,7 +29,7 @@ export const STEPS: Step[] = [
     title: 'Add your dog',
     subtitle:
       'So walkers know who they are picking up. You only do this once, saved to your dog’s profile.',
-    placeholder: 'Louie',
+    placeholder: 'What is your dogs name?',
     skippable: false,
   },
   {

@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Screen } from '../components/Chrome'
 import { Field, Segmented } from '../components/ui'
 import { PinIcon } from '../components/Picker'
-import { WalkerCard } from '../components/WalkerCard'
+import { BrowseCard, PersonCard, Scroller } from '../components/Browse'
+import { KNOWN, SUGGESTED } from '../data/community'
 import { WALKERS } from '../data/walkers'
 import type { AppState } from '../state'
 
@@ -13,13 +14,20 @@ export function Home({ app }: { app: AppState }) {
   return (
     <Screen tab="Home" app={app}>
       <div className="appbar">
-        <span className="appbar__title t-heading-18 grow">Walkie</span>
-        <button
-          className="appbar__side appbar__side--right t-label-12"
-          onClick={() => app.outOfScope('Inbox')}
-        >
-          ✉ ◍
-        </button>
+        <span className="appbar__title t-heading-20 grow">Walkie</span>
+        <div className="row" style={{ gap: 8 }}>
+          <button className="t-label-13 muted" onClick={() => app.outOfScope('Inbox')}>
+            ✉
+          </button>
+          {/* the profile lives in the header now, not in the tab bar */}
+          <button
+            className="appbar__avatar t-title-11"
+            aria-label="Profile"
+            onClick={() => app.outOfScope('Profile')}
+          >
+            D
+          </button>
+        </div>
       </div>
 
       <div style={{ padding: '0 20px 12px' }}>
@@ -32,13 +40,15 @@ export function Home({ app }: { app: AppState }) {
         <div className="card card--lg stack" style={{ gap: 9 }}>
           <Segmented options={['Now', 'Schedule']} value={mode} onChange={setMode} />
           <Field
-            label="For"
-            value={app.dogComplete ? app.dogName : 'Add Dog Details'}
+            label={app.dogComplete ? 'For' : 'For*'}
+            value={app.dogComplete ? app.dogName : ''}
+            placeholder="Add Dog Details"
             onClick={() => (app.dogs.length > 0 ? app.openSheet('dog') : app.openWizard())}
           />
           <Field
             label="Pickup Address"
-            value={app.addressShort || 'Add Address'}
+            value={app.addressShort}
+            placeholder="Add Address"
             icon={app.addressShort ? <PinIcon /> : undefined}
             tag={app.addressShort && app.addressIsDefault ? 'DEFAULT' : undefined}
             onClick={() => app.openSheet('near')}
@@ -46,6 +56,7 @@ export function Home({ app }: { app: AppState }) {
           <Field
             label="When"
             value={mode === 'Now' ? 'As soon as possible' : app.whenLabel}
+            placeholder="Select date and time"
             onClick={() => (mode === 'Now' ? app.outOfScope('Now mode') : app.openSheet('when'))}
           />
           <Field label="Walk length" value={app.form.length} onClick={() => app.openSheet('length')} />
@@ -91,7 +102,7 @@ export function Home({ app }: { app: AppState }) {
           >
             ▤
           </div>
-          <span className="t-title-13" style={{ paddingTop: 5 }}>
+          <span className="t-title-14" style={{ paddingTop: 5 }}>
             Nothing scheduled yet
           </span>
           <span className="t-body-11 muted">Walks you book appear here.</span>
@@ -107,23 +118,61 @@ export function Home({ app }: { app: AppState }) {
             ⚙ Filters
           </button>
         </div>
-        <p className="t-body-10 muted" style={{ margin: 0 }}>
-          Sorted by distance. Tell us about your dog to see matches.
+        <p className="t-body-11 muted" style={{ margin: 0 }}>
+          {app.dogComplete
+            ? `Sorted by best match for ${app.dogName}.`
+            : 'Sorted by distance. Tell us about your dog to see matches.'}
         </p>
       </section>
 
-      <div className="stack" style={{ gap: 9, padding: '0 20px 20px' }}>
+      {/* Nothing is matched here, so the card stays small and the row scrolls sideways. */}
+      <Scroller>
         {WALKERS.map((w) => (
-          <WalkerCard
+          <BrowseCard
             key={w.id}
             walker={w}
-            variant="compact"
             saved={app.saved.includes(w.id)}
             onSave={() => app.toggleSave(w.id)}
             onOpen={() => app.openWalker(w.id)}
           />
         ))}
-      </div>
+      </Scroller>
+
+      <section className="stack" style={{ gap: 9, padding: '18px 0 4px' }}>
+        <div className="row between" style={{ padding: '0 20px' }}>
+          <h2 className="t-heading-16" style={{ margin: 0 }}>
+            Community
+          </h2>
+          <button className="t-title-12 muted" onClick={() => app.outOfScope('Community')}>
+            See all ›
+          </button>
+        </div>
+
+        <span className="t-title-12 dim" style={{ padding: '6px 20px 0' }}>
+          People you know
+        </span>
+        <Scroller>
+          {KNOWN.map((p) => (
+            <PersonCard key={p.id} person={p} connected />
+          ))}
+        </Scroller>
+
+        <span className="t-title-12 dim" style={{ padding: '6px 20px 0' }}>
+          Add to your community
+        </span>
+        <Scroller>
+          {SUGGESTED.map((p) => (
+            <PersonCard
+              key={p.id}
+              person={p}
+              connected={app.connections.includes(p.id)}
+              onConnect={() => app.connect(p.id)}
+            />
+          ))}
+        </Scroller>
+      </section>
+
+      <div style={{ height: 20 }} />
     </Screen>
   )
 }

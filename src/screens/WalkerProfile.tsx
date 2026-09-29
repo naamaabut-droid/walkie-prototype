@@ -17,23 +17,23 @@ export function WalkerProfile({ app }: { app: AppState }) {
             borderTop: '1px solid var(--neutral-300)',
           }}
         >
-          <Button onClick={() => app.go('book')}>Request a walk · ₪{w.price}</Button>
           <Button variant="secondary" onClick={() => app.outOfScope('Messages')}>
             Message {w.name.split(' ')[0]}
           </Button>
+          <Button onClick={() => app.go('book')}>Book {w.name.split(' ')[0]}</Button>
         </div>
       }
     >
       <header className="appbar">
         <button
-          className="appbar__title t-heading-18 grow"
+          className="appbar__title t-heading-20 grow"
           style={{ textAlign: 'left' }}
           onClick={() => app.go('results')}
         >
-          ‹&nbsp;&nbsp;Results
+          ‹
         </button>
         <button
-          className="appbar__side appbar__side--right t-label-12"
+          className="appbar__side appbar__side--right t-label-13"
           onClick={() => app.toggleSave(w.id)}
         >
           {app.saved.includes(w.id) ? '♥' : '♡'}&nbsp;&nbsp;⋯
@@ -60,15 +60,15 @@ export function WalkerProfile({ app }: { app: AppState }) {
           className="stack"
           style={{ gap: 8, padding: 14, borderRadius: 12, background: 'var(--neutral-200)' }}
         >
-          <span className="t-title-10 dim">✦ WHY {w.name.split(' ')[0].toUpperCase()} FITS {app.dogName}</span>
+          <span className="t-title-11 dim">✦ WHY {w.name.split(' ')[0].toUpperCase()} FITS {app.dogName}</span>
           <p className="t-body-12" style={{ margin: 0 }}>
             {app.dogName} startles at bikes and needs to burn energy. {w.name.split(' ')[0]} walks
             quiet routes, one dog at a time.
           </p>
           <div className="chiprow">
-            <Chip>quiet routes</Chip>
-            <Chip>walks solo</Chip>
-            <Chip>2 pullers this month</Chip>
+            <Chip>Walks solo</Chip>
+            <Chip>Quiet routes</Chip>
+            <Chip>Last-minute</Chip>
           </div>
           <button className="t-body-11 dim" style={{ textAlign: 'left' }} onClick={() => app.go('wizard')}>
             Not right? Edit {app.dogName}’s profile →
@@ -87,7 +87,7 @@ export function WalkerProfile({ app }: { app: AppState }) {
 
       <Section
         title={`From ${w.name.split(' ')[0]}’s walks`}
-        aside={`See all ${w.walkPhotos}  ›`}
+        aside={'See all  ›'}
         onAside={() => app.outOfScope('Her walk gallery')}
       >
         <div className="row" style={{ gap: 10, alignItems: 'stretch' }}>
@@ -108,7 +108,7 @@ export function WalkerProfile({ app }: { app: AppState }) {
                   padding: 7,
                 }}
               >
-                <span className="chip t-title-10" style={{ gap: 5, padding: '3px 8px 3px 4px' }}>
+                <span className="chip t-title-11" style={{ gap: 5, padding: '3px 8px 3px 4px' }}>
                   <span
                     style={{ width: 13, height: 13, borderRadius: 999, background: 'var(--neutral-200)' }}
                   />
@@ -127,8 +127,8 @@ export function WalkerProfile({ app }: { app: AppState }) {
       <Section title={`Who vouches for ${w.name.split(' ')[0]}`}>
         <div className="card stack" style={{ gap: 10 }}>
           {[
-            { who: 'Noa — 2 streets away', what: '“Walks my German Shepherd twice a week.”' },
-            { who: 'Dr. Levi — Florentin Vet', what: 'Verified professional reference' },
+            { who: 'Noa', what: '“Walks my German Shepherd twice a week.”' },
+            { who: 'Dr. Levi', what: 'Verified professional reference' },
           ].map((v) => (
             <div key={v.who} className="row" style={{ gap: 10, alignItems: 'flex-start' }}>
               <span
@@ -186,7 +186,7 @@ function Line({ label, value }: { label: string; value: string }) {
   return (
     <div className="row between" style={{ gap: 8 }}>
       <span className="t-body-12 muted">{label}</span>
-      <span className="t-label-12">{value}</span>
+      <span className="t-label-13">{value}</span>
     </div>
   )
 }

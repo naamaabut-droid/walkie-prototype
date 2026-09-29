@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useState } from 'react'
 import { PREFILLED, STEPS } from './data/dogWizard'
-import { WALKERS } from './data/walkers'
+import { ALL_WALKERS, MATCHED } from './data/walkers'
 
 export type Route =
   | 'home'
   | 'wizard'
   | 'dogSaved'
   | 'results'
+  | 'filtered'
   | 'filters'
   | 'profile'
   | 'book'
@@ -21,6 +22,7 @@ export const ORDER: Route[] = [
   'dogSaved',
   'results',
   'filters',
+  'filtered',
   'profile',
   'book',
   'sent',
@@ -32,8 +34,9 @@ export const SCREEN_TITLES: Record<Route, string> = {
   home: 'Home — search',
   wizard: 'About your dog',
   dogSaved: 'Dog details saved',
-  results: 'Results',
+  results: 'Results — before filtering',
   filters: 'Filters',
+  filtered: 'Results — filtered',
   profile: 'Walker profile',
   book: 'Book',
   sent: 'Request sent',
@@ -56,11 +59,11 @@ const DEFAULT_FILTERS: Filters = {
   lastMinute: true,
   radius: '3 km',
   size: 'Large · 18–45 kg',
-  pack: 'Solo only',
+  pack: 'Up to 2 dogs',
   style: ['City streets', 'Parks & grass', 'Shaded in summer'],
   hours: 'Afternoon',
-  length: '45 min',
-  commitment: 'One-off is fine',
+  length: '30 min',
+  commitment: 'Any',
 }
 
 const SIZE_LABELS: Record<string, string> = {
@@ -104,10 +107,11 @@ export type Address = {
   directions: string
 }
 
+/** Day and time start unset: the Home frame opens on "Select date and time". */
 const DEFAULT_FORM: Form = {
-  day: 'Thursday',
-  time: '17:00',
-  length: '45 min',
+  day: '',
+  time: '',
+  length: '30 min',
   sort: 'Best match',
 }
 
@@ -149,6 +153,8 @@ export function useApp() {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [saved, setSaved] = useState<string[]>([])
+  /** who she has added to her community — the suggested cards flip once she does */
+  const [connections, setConnections] = useState<string[]>([])
   const [photo, setPhotoUrl] = useState<string | null>(null)
   const [dogs, setDogs] = useState<Dog[]>([])
   const [activeDogId, setActiveDogId] = useState<string | null>(null)
@@ -195,7 +201,10 @@ export function useApp() {
     })
   }, [])
 
-  const walker = useMemo(() => WALKERS.find((w) => w.id === walkerId) ?? WALKERS[0], [walkerId])
+  const walker = useMemo(
+    () => ALL_WALKERS.find((w) => w.id === walkerId) ?? ALL_WALKERS[0],
+    [walkerId],
+  )
 
   /** The saved screen is not a drawing — it reads the answers back. */
   const summary = useMemo(
@@ -332,10 +341,12 @@ export function useApp() {
         return file ? URL.createObjectURL(file) : null
       })
     },
-    dogSize: dogSize.replace('Large · 18–45 kg', 'Large, 28 kg'),
+    dogSize,
     saved,
     toggleSave: (id: string) =>
       setSaved((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id])),
+    connections,
+    connect: (id: string) => setConnections((c) => (c.includes(id) ? c : [...c, id])),
     walker,
     openWalker: (id: string) => {
       setWalkerId(id)
@@ -352,7 +363,7 @@ export function useApp() {
         style: f.style.includes(s) ? f.style.filter((x) => x !== s) : [...f.style, s],
       })),
     resetFilters: () => setFilters(DEFAULT_FILTERS),
-    matchCount: WALKERS.length,
+    matchCount: MATCHED.length,
     frequency,
     setFrequency,
 
@@ -370,21 +381,19 @@ export function useApp() {
     setAddressIsDefault,
     /** what the Home row shows: the street, once there is one */
     addressShort:
-      [[address.number, address.street].filter(Boolean).join(' '), address.area]
+      [address.area, [address.number, address.street].filter(Boolean).join(' ')]
         .filter(Boolean)
-        .join(', ') || '',
+        .join(', ') + (address.street ? ' St.' : ''),
+    /**
+     * The booking screen shows the street, not the door. The door is collected once
+     * and reused — the form says so — so repeating it here would be noise.
+     */
     addressLabel:
-      [
-        [address.number, address.street].filter(Boolean).join(' '),
-        address.entrance ? `Entrance ${address.entrance}` : '',
-        address.apt ? `Apt ${address.apt}` : '',
-        address.floor ? `Floor ${address.floor}` : '',
-        address.area,
-      ]
+      [address.area, [address.number, address.street].filter(Boolean).join(' ')]
         .filter(Boolean)
-        .join(' · ') || 'Add Address',
+        .join(', ') + (address.street ? ' St.' : '') || 'Add Address',
     setWhen: (day: string, time: string) => setForm((f) => ({ ...f, day, time })),
-    whenLabel: `${form.day} · ${form.time}`,
+    whenLabel: form.day && form.time ? `${form.day} · ${form.time}` : '',
 
     sheet,
     openSheet: (kind: Exclude<SheetKind, null>) => setSheet(kind),

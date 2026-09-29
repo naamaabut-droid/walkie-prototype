@@ -25,7 +25,7 @@ export function DogPicker({
   return (
     <Sheet onDismiss={onDismiss}>
       <div className="stack" style={{ gap: 4, paddingBottom: 12 }}>
-        <span className="t-heading-18">Which dog is this walk for?</span>
+        <span className="t-heading-20">Which dog is this walk for?</span>
         <span className="t-body-12 muted">Their profile decides who gets shown.</span>
       </div>
 

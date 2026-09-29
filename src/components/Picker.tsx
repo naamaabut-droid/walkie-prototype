@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Sheet } from './Sheet'
 import type { Address } from '../state'
 import { Button } from './ui'
@@ -22,7 +21,7 @@ export function ListPicker({
   return (
     <Sheet onDismiss={onDismiss}>
       <div className="stack" style={{ gap: 4, paddingBottom: 12 }}>
-        <span className="t-heading-18">{title}</span>
+        <span className="t-heading-20">{title}</span>
         {note ? <span className="t-body-12 muted">{note}</span> : null}
       </div>
       <div className="stack" style={{ gap: 6, maxHeight: 300, overflowY: 'auto' }}>
@@ -66,7 +65,7 @@ export function WhenPicker({
   return (
     <Sheet onDismiss={onDismiss}>
       <div className="stack" style={{ gap: 4, paddingBottom: 12 }}>
-        <span className="t-heading-18">When does {dogName} need a walk?</span>
+        <span className="t-heading-20">When does {dogName} need a walk?</span>
         <span className="t-body-12 muted">Pick a day and a time.</span>
       </div>
 
@@ -77,7 +76,7 @@ export function WhenPicker({
 
       <div style={{ paddingTop: 14 }}>
         <Button onClick={onDismiss}>
-          Set {day} · {time}
+          Confirm
         </Button>
       </div>
     </Sheet>
@@ -105,32 +104,14 @@ export function AddressSheet({
   onDefaultChange: (v: boolean) => void
   onDismiss: () => void
 }) {
-  const [locating, setLocating] = useState(false)
   const set = (patch: Partial<Address>) => onChange({ ...address, ...patch })
-
-  const useCurrent = () => {
-    setLocating(true)
-    window.setTimeout(() => {
-      setLocating(false)
-      set({ city: 'Tel Aviv', area: 'Florentin', street: 'Vital', number: '12', postcode: '6608315' })
-    }, 700)
-  }
 
   return (
     <Sheet onDismiss={onDismiss}>
       <div className="stack" style={{ gap: 4, paddingBottom: 12 }}>
-        <span className="t-heading-18">{title}</span>
+        <span className="t-heading-20">{title}</span>
         <span className="t-body-12 muted">The walker comes to your door.</span>
       </div>
-
-      <button className="locate" onClick={useCurrent} disabled={locating}>
-        <span className="locate__icon" data-busy={locating || undefined}>
-          <CrosshairIcon />
-        </span>
-        <span className="t-title-13">
-          {locating ? 'Finding you…' : 'Fill from my current location'}
-        </span>
-      </button>
 
       <div className="formgrid">
         <Input label="City" value={address.city} onChange={(v) => set({ city: v })} span={2} required placeholder="Tel Aviv" />
@@ -158,7 +139,7 @@ export function AddressSheet({
         onClick={() => onDefaultChange(!isDefault)}
       >
         <span className="stack grow" style={{ gap: 2, textAlign: 'left' }}>
-          <span className="t-title-13">Save as my default address</span>
+          <span className="t-title-14">Save as my default address</span>
           <span className="t-body-11 muted">Filled in for you on every walk from now on.</span>
         </span>
         <span className="switch" data-on={isDefault || undefined}>
@@ -167,7 +148,7 @@ export function AddressSheet({
       </button>
 
       <div style={{ paddingTop: 14 }}>
-        <Button onClick={onDismiss}>Save address</Button>
+        <Button onClick={onDismiss}>Save Address</Button>
       </div>
     </Sheet>
   )
@@ -195,7 +176,7 @@ function Input({
         {required ? <span className="req"> *</span> : null}
       </span>
       <input
-        className="t-body-13 search"
+        className="t-body-14 search"
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
@@ -218,15 +199,6 @@ export function PinIcon() {
   )
 }
 
-function CrosshairIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="8" cy="8" r="6.2" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
-      <path d="M8 0v2.2M8 13.8V16M0 8h2.2M13.8 8H16" stroke="currentColor" strokeWidth="1.4" />
-    </svg>
-  )
-}
 
 function Wheel({
   items,
@@ -266,7 +238,7 @@ function Wheel({
             key={i}
             aria-pressed={i === value}
             onClick={() => onPick(i)}
-            className={i === value ? 'chip chip--on t-title-13' : 'chip t-label-13'}
+            className={i === value ? 'chip chip--on t-title-14' : 'chip t-label-13'}
             style={{ justifyContent: 'center', borderRadius: 8, padding: '9px 0' }}
           >
             {i}

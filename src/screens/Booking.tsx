@@ -6,22 +6,24 @@ import type { AppState } from '../state'
 /** F1-6 · Book. Payment is not here on purpose — it is set once, in settings. */
 export function BookWalker({ app }: { app: AppState }) {
   const w = app.walker
-  const first = w.name.split(' ')[0]
   return (
     <Screen
       footer={
         <div style={{ padding: '12px 20px 24px' }}>
-          <Button onClick={() => app.go('sent')}>Send request</Button>
+          {/* Day and time is required; the frame draws no enabled button without it. */}
+          <Button disabled={!app.whenLabel} onClick={() => app.go('sent')}>
+            Send Request
+          </Button>
         </div>
       }
     >
       <header className="appbar">
         <button
-          className="appbar__title t-heading-18 grow"
+          className="appbar__title t-heading-20 grow"
           style={{ textAlign: 'left' }}
           onClick={() => app.back()}
         >
-          ‹&nbsp;&nbsp;Book {first}
+          ‹
         </button>
       </header>
 
@@ -29,8 +31,11 @@ export function BookWalker({ app }: { app: AppState }) {
         <div className="card card--flat row" style={{ gap: 11, padding: '12px 14px' }}>
           <span style={{ width: 38, height: 38, borderRadius: 999, background: 'var(--neutral-200)' }} />
           <div className="stack grow" style={{ gap: 2 }}>
-            <span className="t-title-13">{w.name}</span>
-            <span className="t-body-10 muted">
+            <span className="t-title-14">
+              {w.name}
+              {app.whenLabel ? ` · ₪${w.price}` : ''}
+            </span>
+            <span className="t-body-11 muted">
               Walks solo · quiet routes · takes dogs {app.dogName}’s size
             </span>
           </div>
@@ -42,13 +47,19 @@ export function BookWalker({ app }: { app: AppState }) {
         <Labelled label="Pickup address">
           <Field
             label=""
-            value={app.addressLabel}
+            value={app.addressShort}
+            placeholder="Add Address"
             icon={<PinIcon />}
             onClick={() => app.openSheet('address')}
           />
         </Labelled>
         <Labelled label="Day and time">
-          <Field label="" value={app.whenLabel} onClick={() => app.openSheet('when')} />
+          <Field
+            label=""
+            value={app.whenLabel}
+            placeholder="Select date and time"
+            onClick={() => app.openSheet('when')}
+          />
         </Labelled>
         <Labelled label="Walk length">
           <Field label="" value={app.form.length} onClick={() => app.openSheet('length')} />
@@ -84,7 +95,7 @@ export function RequestSent({ app }: { app: AppState }) {
     <Screen tab={app.route === 'waiting' ? 'Scheduled' : null} app={app}>
       <header className="appbar">
         <span className="grow" />
-        <button className="t-heading-18" onClick={() => app.go('home')}>
+        <button className="t-heading-20" onClick={() => app.go('home')}>
           X
         </button>
       </header>
@@ -103,8 +114,8 @@ export function RequestSent({ app }: { app: AppState }) {
           <span className="t-heading-24 center" style={{ color: 'var(--green-600)' }}>
             ✓
           </span>
-          <span className="t-heading-18 center">Request sent to {first}</span>
-          <span className="t-body-13 center" style={{ color: 'var(--green-600)' }}>
+          <span className="t-heading-20 center">Request sent to {first}</span>
+          <span className="t-body-14 center" style={{ color: 'var(--green-600)' }}>
             Usually replies in about 20 minutes.
           </span>
         </div>
@@ -112,7 +123,12 @@ export function RequestSent({ app }: { app: AppState }) {
         <div className="card stack" style={{ gap: 7 }}>
           <span className="t-title-12">What you asked for</span>
           <Row label="Dog" value={`${app.dogName} · ${app.dogSize}`} />
-          <Row label="When" value={`${app.whenLabel} · ${app.form.length}`} />
+          <Row
+            label="When"
+            value={`${app.whenLabel} · ${app.form.length} · ${
+              app.frequency === 'Weekly' ? 'weekly' : 'one-off'
+            }`}
+          />
           <Row label="Price" value={`₪${w.price} · only if she accepts`} />
         </div>
 
@@ -122,18 +138,18 @@ export function RequestSent({ app }: { app: AppState }) {
           onClick={() => app.outOfScope('Messages')}
         >
           <span className="t-body-12 muted">Message {first}</span>
-          <span className="t-label-12">›</span>
+          <span className="t-label-13">›</span>
         </button>
       </div>
 
       {app.route === 'sent' ? (
         <div style={{ padding: '12px 20px 24px', marginTop: 'auto' }}>
           <button
-            className="btn btn--primary t-title-13"
+            className="btn btn--primary t-title-14"
             style={{ padding: '14px 0' }}
             onClick={() => app.go('waiting')}
           >
-            View all Bookings
+            Done
           </button>
         </div>
       ) : null}
@@ -145,7 +161,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="row between" style={{ gap: 10 }}>
       <span className="t-body-12 muted">{label}</span>
-      <span className="t-label-12">{value}</span>
+      <span className="t-label-13">{value}</span>
     </div>
   )
 }
@@ -170,8 +186,8 @@ export function PushAccepted({ app }: { app: AppState }) {
       <div className="push stack" style={{ gap: 5 }}>
         <div className="row" style={{ gap: 7 }}>
           <span style={{ width: 18, height: 18, borderRadius: 6, background: 'var(--neutral-200)' }} />
-          <span className="t-title-10 muted grow">WALKIE</span>
-          <span className="t-body-10 muted">now</span>
+          <span className="t-title-11 muted grow">WALKIE</span>
+          <span className="t-body-11 muted">now</span>
         </div>
         <span className="t-title-14">{first} accepted your walk</span>
         <span className="t-body-12 dim">

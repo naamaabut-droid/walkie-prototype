@@ -3,15 +3,18 @@ import type { ReactNode } from 'react'
 export function Button({
   children,
   variant = 'primary',
+  disabled = false,
   onClick,
 }: {
   children: ReactNode
   variant?: 'primary' | 'secondary' | 'ghost'
+  /** A required field is missing — the button says so instead of failing on tap. */
+  disabled?: boolean
   onClick?: () => void
 }) {
-  const type = variant === 'primary' ? 't-title-14' : variant === 'secondary' ? 't-title-14' : 't-title-13'
+  const type = variant === 'primary' ? 't-title-14' : variant === 'secondary' ? 't-title-14' : 't-title-14'
   return (
-    <button className={`btn btn--${variant} ${type}`} onClick={onClick}>
+    <button className={`btn btn--${variant} ${type}`} disabled={disabled} onClick={onClick}>
       {children}
     </button>
   )
@@ -22,6 +25,7 @@ export type ChipTone = 'default' | 'on' | 'fact' | 'notice' | 'fit' | 'neutral' 
 export function Chip({
   children,
   tone = 'default',
+  /** kept as a prop because call sites pass it; the 10px step was merged into 11 */
   size = 11,
   onClick,
 }: {
@@ -30,8 +34,9 @@ export function Chip({
   size?: 10 | 11
   onClick?: () => void
 }) {
+  void size
   const cls = tone === 'default' ? 'chip' : `chip chip--${tone}`
-  const type = tone === 'on' ? `t-title-${size}` : size === 10 ? 't-title-10' : 't-label-11'
+  const type = tone === 'on' ? 't-title-11' : 't-label-11'
   const Tag = onClick ? 'button' : 'span'
   return (
     <Tag className={`${cls} ${type}`} onClick={onClick}>
@@ -64,25 +69,33 @@ export function ChipGroup({
 export function Field({
   label,
   value,
+  placeholder,
   icon,
   tag,
   onClick,
 }: {
   label: string
+  /** empty means the field has no value yet, and the placeholder is shown instead */
   value: string
+  /** what an empty field says — lighter and regular, so the two states never look alike */
+  placeholder?: string
   /** sits with the value, so the field says what kind of value it holds */
   icon?: ReactNode
   /** a small marker on the value, e.g. DEFAULT */
   tag?: string
   onClick?: () => void
 }) {
+  const empty = !value
   const inner = (
     <>
-      <span className="field__label t-title-13">{label}</span>
-      <span className="field__value t-body-13 row" style={{ gap: 7 }}>
+      <span className="field__label t-title-14">{label}</span>
+      <span
+        className={`field__value row ${empty ? 'field__value--empty t-body-14' : 't-title-14'}`}
+        style={{ gap: 7 }}
+      >
         {icon ? <span className="field__icon">{icon}</span> : null}
-        {value}
-        {tag ? <span className="field__tag t-title-10">{tag}</span> : null}
+        {empty ? placeholder : value}
+        {tag ? <span className="field__tag t-title-11">{tag}</span> : null}
       </span>
     </>
   )
@@ -108,9 +121,9 @@ export function EditableField({
 }) {
   return (
     <label className="field">
-      <span className="field__label t-title-13">{label}</span>
+      <span className="field__label t-title-14">{label}</span>
       <input
-        className="field__value t-body-13"
+        className={`field__value ${value ? 't-title-14' : 'field__value--empty t-body-14'}`}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
@@ -140,7 +153,7 @@ export function Segmented({
   return (
     <div className="segmented">
       {options.map((o) => (
-        <button key={o} aria-pressed={o === value} className="t-title-13" onClick={() => onChange(o)}>
+        <button key={o} aria-pressed={o === value} className="t-title-14" onClick={() => onChange(o)}>
           {o}
         </button>
       ))}
@@ -201,7 +214,7 @@ export function Vouchers({ initials }: { initials: string[] }) {
   return (
     <span className="vouchers">
       {initials.map((i, n) => (
-        <span key={i + n} className="voucher t-title-10" style={{ background: VOUCH_COLORS[n % 3] }}>
+        <span key={i + n} className="voucher t-title-11" style={{ background: VOUCH_COLORS[n % 3] }}>
           {i}
         </span>
       ))}

@@ -25,17 +25,17 @@ export function AppBar({
   return (
     <div className="appbar">
       {left !== undefined ? (
-        <button className="appbar__side t-label-12" onClick={onLeft}>
+        <button className="appbar__side t-label-13" onClick={onLeft}>
           {left}
         </button>
       ) : null}
-      <div className={'appbar__title t-heading-18 grow' + (center ? ' center' : '')}>{title}</div>
-      <div className="appbar__side appbar__side--right t-label-12">{right}</div>
+      <div className={'appbar__title t-heading-20 grow' + (center ? ' center' : '')}>{title}</div>
+      <div className="appbar__side appbar__side--right t-label-13">{right}</div>
     </div>
   )
 }
 
-const TABS = ['Saved', 'Scheduled', 'Home', 'Community', 'Profile'] as const
+const TABS = ['Saved', 'Scheduled', 'Home', 'Requests', 'Community'] as const
 export type Tab = (typeof TABS)[number]
 
 export function TabBar({
@@ -63,7 +63,7 @@ export function TabBar({
             ) : (
               <div className="tabbar__box" />
             )}
-            <span className={current ? 't-title-10' : 't-body-10'}>{tab}</span>
+            <span className={current ? 't-title-11' : 't-body-11'}>{tab}</span>
           </button>
         )
       })}

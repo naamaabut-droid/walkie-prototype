@@ -45,14 +45,14 @@ export function DogWizard({ app }: { app: AppState }) {
       }
     >
       <header className="appbar">
-        <button className="appbar__side t-title-13" onClick={app.prevStep} aria-label="Back">
+        <button className="appbar__side t-title-14" onClick={app.prevStep} aria-label="Back">
           ‹
         </button>
         <span className="t-label-11 muted grow center">
           Step {index + 1} of {STEPS.length}
         </span>
         <button
-          className="appbar__side appbar__side--right t-title-13"
+          className="appbar__side appbar__side--right t-title-14"
           onClick={() => app.go('home')}
           aria-label="Close"
         >
@@ -67,7 +67,7 @@ export function DogWizard({ app }: { app: AppState }) {
       <div className="stack" style={{ gap: 6, padding: '0 18px 18px' }}>
         {step.required ? (
           <span
-            className="chip chip--notice t-title-10"
+            className="chip chip--notice t-title-11"
             style={{ alignSelf: 'flex-start', padding: '4px 9px' }}
           >
             REQUIRED
@@ -77,7 +77,7 @@ export function DogWizard({ app }: { app: AppState }) {
           {step.title}
         </h1>
         {step.subtitle ? (
-          <p className="t-body-13 dim" style={{ margin: 0 }}>
+          <p className="t-body-14 dim" style={{ margin: 0 }}>
             {step.subtitle}
           </p>
         ) : null}
@@ -105,7 +105,7 @@ export function DogWizard({ app }: { app: AppState }) {
 
       {step.kind === 'notes' ? (
         <div className="stack" style={{ gap: 8, padding: '6px 18px' }}>
-          <span className="t-title-13">Your note (optional)</span>
+          <span className="t-title-14">Your note (optional)</span>
           <textarea
             className="t-body-12"
             rows={3}
@@ -141,7 +141,7 @@ export function DogWizard({ app }: { app: AppState }) {
 
       {step.aside ? (
         <div className="row between" style={{ padding: '16px 18px 0' }}>
-          <span className="t-label-12 dim">{step.aside.label}</span>
+          <span className="t-label-13 dim">{step.aside.label}</span>
           <span className="t-title-12 muted">{step.aside.action}</span>
         </div>
       ) : null}
@@ -219,7 +219,7 @@ function PhotoField({
           >
             +
           </span>
-          <span className="t-title-13">Add a photo</span>
+          <span className="t-title-14">Add a photo</span>
           <span className="t-body-11 muted">Camera or photo library</span>
         </button>
       )}
@@ -233,16 +233,23 @@ export function DogSaved({ app }: { app: AppState }) {
     <Screen
       footer={
         <div className="stack" style={{ gap: 9, padding: '10px 18px 24px' }}>
+          {/* Matching is the secondary way out; the profile is saved either way. */}
           <Button
+            variant="ghost"
             onClick={() => {
               app.saveDog()
               app.go('results')
             }}
           >
-            Show Matches
+            Find matches →
           </Button>
-          <Button variant="ghost" onClick={() => app.go('wizard')}>
-            Back To Editing
+          <Button
+            onClick={() => {
+              app.saveDog()
+              app.go('home')
+            }}
+          >
+            Done
           </Button>
         </div>
       }
@@ -251,7 +258,7 @@ export function DogSaved({ app }: { app: AppState }) {
         {/* The frame draws this X but gives it no behaviour. It saves and returns
             home — closing a screen called "Dog Details Saved" must not lose them. */}
         <button
-          className="appbar__side appbar__side--right t-title-13 grow right"
+          className="appbar__side appbar__side--right t-title-14 grow right"
           aria-label="Close"
           onClick={app.saveDog}
         >
@@ -294,7 +301,7 @@ export function DogSaved({ app }: { app: AppState }) {
               >
                 <span className="row" style={{ gap: 8 }}>
                   <span className="t-heading-11">✓</span>
-                  <span className="t-label-12 dim">{row.label}</span>
+                  <span className="t-label-13 dim">{row.label}</span>
                 </span>
                 <span className="t-title-12 right">{row.value}</span>
               </div>

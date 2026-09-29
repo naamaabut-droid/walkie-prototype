@@ -74,38 +74,29 @@
 }
 
 /* ---- Text styles, one class per Figma style ----
-   Named exactly as the style: Wireframes/Title/13 -> .t-title-13  */
+   Named exactly as the style: Wireframes/Title/14 -> .t-title-14  */
 
 .t-display-62 { font: 700 62px/74px Inter, system-ui, sans-serif; }
 .t-display-28 { font: 400 28px/1.2 Inter, system-ui, sans-serif; }
 
 .t-heading-24 { font: 700 24px/32px Inter, system-ui, sans-serif; }
-.t-heading-22 { font: 700 22px/32px Inter, system-ui, sans-serif; }
 .t-heading-20 { font: 700 20px/28px Inter, system-ui, sans-serif; }
-.t-heading-18 { font: 700 18px/26px Inter, system-ui, sans-serif; }
 .t-heading-16 { font: 700 16px/22px Inter, system-ui, sans-serif; }
 .t-heading-14 { font: 700 14px/20px Inter, system-ui, sans-serif; }
 .t-heading-11 { font: 700 11px/16px Inter, system-ui, sans-serif; }
-.t-heading-10 { font: 700 10px/15px Inter, system-ui, sans-serif; }
 
 .t-title-20 { font: 600 20px/26px Inter, system-ui, sans-serif; }
 .t-title-16 { font: 600 16px/22px Inter, system-ui, sans-serif; }
 .t-title-14 { font: 600 14px/20px Inter, system-ui, sans-serif; }
-.t-title-13 { font: 600 13px/19px Inter, system-ui, sans-serif; }
 .t-title-12 { font: 600 12px/17px Inter, system-ui, sans-serif; }
 .t-title-11 { font: 600 11px/15px Inter, system-ui, sans-serif; }
-.t-title-10 { font: 600 10px/13px Inter, system-ui, sans-serif; }
 
 .t-body-16 { font: 400 16px/24px Inter, system-ui, sans-serif; }
 .t-body-14 { font: 400 14px/20px Inter, system-ui, sans-serif; }
-.t-body-13 { font: 400 13px/18px Inter, system-ui, sans-serif; }
 .t-body-12 { font: 400 12px/17px Inter, system-ui, sans-serif; }
 .t-body-11 { font: 400 11px/16px Inter, system-ui, sans-serif; }
-.t-body-10 { font: 400 10px/14px Inter, system-ui, sans-serif; }
 
 .t-label-13 { font: 500 13px/19px Inter, system-ui, sans-serif; }
-.t-label-12 { font: 500 12px/17px Inter, system-ui, sans-serif; }
 .t-label-11 { font: 500 11px/15px Inter, system-ui, sans-serif; }
-.t-label-10 { font: 500 10px/15px Inter, system-ui, sans-serif; }
 
 .t-eyebrow-11 { font: 600 11px/14px Inter, system-ui, sans-serif; letter-spacing: 0.6px; }

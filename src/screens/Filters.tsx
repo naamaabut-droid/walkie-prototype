@@ -12,69 +12,24 @@ export function Filters({ app }: { app: AppState }) {
     <Screen
       footer={
         <div style={{ padding: '12px 20px 24px' }}>
-          <Button onClick={() => app.go('results')}>Show {app.matchCount} walkers</Button>
+          <Button onClick={() => app.go('filtered')}>Show Results</Button>
         </div>
       }
     >
       <header className="appbar">
-        <button className="appbar__side t-label-12" onClick={app.resetFilters}>
+        <button className="appbar__side t-label-13" onClick={app.resetFilters}>
           Reset
         </button>
-        <span className="appbar__title t-heading-18 grow center">Filters</span>
+        <span className="appbar__title t-heading-20 grow center">Filters</span>
         <button
-          className="appbar__side appbar__side--right t-title-13"
+          className="appbar__side appbar__side--right t-title-14"
           onClick={() => app.go('results')}
         >
           X
         </button>
       </header>
 
-      <p className="t-body-12 muted" style={{ margin: 0, padding: '0 20px 6px' }}>
-        Size and pack remove walkers. Everything else reorders them.
-      </p>
-
       <div className="stack" style={{ gap: 15, padding: '10px 20px 0' }}>
-        <div
-          className="row"
-          style={{
-            gap: 12,
-            padding: 13,
-            borderRadius: 12,
-            background: 'var(--amber-50)',
-          }}
-        >
-          <div className="stack grow" style={{ gap: 2 }}>
-            <span className="t-title-12" style={{ color: 'var(--amber-600)' }}>
-              Available last minute
-            </span>
-            <span className="t-body-10 dim">Someone who can take him within the hour.</span>
-          </div>
-          <button
-            role="switch"
-            aria-checked={f.lastMinute}
-            onClick={() => app.setFilter('lastMinute', !f.lastMinute)}
-            style={{
-              width: 42,
-              height: 24,
-              borderRadius: 999,
-              padding: 3,
-              background: f.lastMinute ? 'var(--amber-600)' : 'var(--neutral-300)',
-              display: 'flex',
-              justifyContent: f.lastMinute ? 'flex-end' : 'flex-start',
-            }}
-          >
-            <span
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 999,
-                background: 'var(--neutral-0)',
-                transition: 'all 160ms ease',
-              }}
-            />
-          </button>
-        </div>
-
         <Group title="How far will the walker travel?" note="Their radius, not yours.">
           <ChipGroup
             options={['1 km', '3 km', '5 km', '10 km', 'Any']}
@@ -83,7 +38,7 @@ export function Filters({ app }: { app: AppState }) {
           />
         </Group>
 
-        <Group title="Takes dogs of this size" note="Large · 28 kg, from his profile.">
+        <Group title="Takes dogs of this size" note="Large · 18–45 kg, from his profile.">
           <ChipGroup
             options={['Small · 0–7 kg', 'Medium · 8–18 kg', 'Large · 18–45 kg', 'Giant · 45 kg+']}
             value={f.size}
@@ -138,6 +93,47 @@ export function Filters({ app }: { app: AppState }) {
             onChange={(v) => app.setFilter('commitment', v)}
           />
         </Group>
+
+        <div
+          className="row"
+          style={{
+            gap: 12,
+            padding: 13,
+            borderRadius: 12,
+            background: 'var(--amber-50)',
+          }}
+        >
+          <div className="stack grow" style={{ gap: 2 }}>
+            <span className="t-title-12" style={{ color: 'var(--amber-600)' }}>
+              Available last minute
+            </span>
+            <span className="t-body-11 dim">Someone who can take him within the hour.</span>
+          </div>
+          <button
+            role="switch"
+            aria-checked={f.lastMinute}
+            onClick={() => app.setFilter('lastMinute', !f.lastMinute)}
+            style={{
+              width: 42,
+              height: 24,
+              borderRadius: 999,
+              padding: 3,
+              background: f.lastMinute ? 'var(--amber-600)' : 'var(--neutral-300)',
+              display: 'flex',
+              justifyContent: f.lastMinute ? 'flex-end' : 'flex-start',
+            }}
+          >
+            <span
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 999,
+                background: 'var(--neutral-0)',
+                transition: 'all 160ms ease',
+              }}
+            />
+          </button>
+        </div>
       </div>
     </Screen>
   )
