@@ -48,10 +48,11 @@ function variantsFor(kind: Transition) {
     }
   }
   const dir = kind === 'forward' ? 1 : -1
+  // a percentage, not 390px: the device fills the window on a phone
   return {
-    initial: { x: dir * 390 },
+    initial: { x: `${dir * 100}%` },
     animate: { x: 0 },
-    exit: { x: -dir * 390 },
+    exit: { x: `${-dir * 100}%` },
     transition: { duration: kind === 'forward' ? 0.35 : 0.3, ease: EASE },
   }
 }

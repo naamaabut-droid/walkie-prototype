@@ -1,7 +1,9 @@
 # Walkie — Flow 1, in code
 
-A running prototype of **Flow 1 · a new owner books her first walk** — the ten screens a first-time
-owner passes through from the home screen to the accepted push.
+**→ [Open the prototype](https://naamaabut-droid.github.io/walkie-prototype/)**
+
+A running prototype of **Flow 1 · a new owner books her first walk** — the eleven screens a
+first-time owner passes through from the home screen to the accepted push.
 
 It is built from the Figma file, not traced from it. Every colour, size, radius and text style comes
 from a token that exists in
@@ -27,17 +29,18 @@ design turns into once it has to run.
 | Maya L. written into 3 frames | one record in `data/walkers.ts` | Changing her price changes it everywhere at once |
 | `About your dog — saved`, drawn | `state.summary`, computed from the answers | The summary cannot disagree with what you picked, because it *is* what you picked |
 | `Colors` + `Walkie Tokens` variables | `styles/tokens.css` custom properties | One file to re-export when the palette moves |
-| 28 text styles | 28 classes, named for the style | `Wireframes/Title/13` → `.t-title-13` |
+| 19 text styles | 19 classes, named for the style | `Wireframes/Title/14` → `.t-title-14` |
 | Prototype reactions | `state.ts` routes + the transition table in `App.tsx` | Same timings and directions as the Figma prototype |
 | `ON_DRAG` hotspot on the sheet | a real drag, in `Sheet.tsx` | Figma could only fake the gesture; here it follows your finger and has velocity |
 
 ## The type scale
 
 The wireframes originally carried 71 text styles with half-pixel sizes (9.5, 10.5, 11.5, 12.5, 13.5)
-and odd sizes above 15 (15, 17, 21). They were consolidated in Figma first, to
-**10 · 11 · 12 · 13 · 14 · 16 · 18 · 20 · 22 · 24** (+28, 62 display), and the CSS classes were
-generated from that. The size is the name — `.t-body-10`, `.t-title-13` — so a class and a Figma
-style can never mean different things.
+and odd sizes above 15 (15, 17, 21). They were consolidated in Figma in two passes, down to **19** —
+Heading 24 · 20 · 16 · 14 · 11, Title 20 · 16 · 14 · 12 · 11, Body 16 · 14 · 12 · 11, Label 13 · 11,
+plus Display 28 and 62 — and the CSS classes were generated from that. The size is the name
+(`.t-body-11`, `.t-title-14`), so a class and a Figma style can never mean different things. When a
+pair merged, the larger of the two survived and the dead class was deleted rather than left behind.
 
 ## Structure
 
@@ -83,10 +86,13 @@ Nothing here is a picture of a control.
 - **The questionnaire is the gate.** *Find a walker* with no profile opens it, at the first question
   still unanswered rather than back at step 1, because nobody can be matched without it.
 
-**What deliberately does not work:** anything outside Flow 1 — the Saved, Scheduled, Community and
-Profile tabs, Messages, the inbox, the full walker list. Those screens were never designed, so
-tapping them says *"— not part of Flow 1"* rather than doing nothing. A dead control reads as a bug;
-one that names its own boundary reads as a decision.
+- **Community is real.** Home carries two catalogues — people already connected, and people who
+  can be added — and *Connect* actually moves someone from the second into the first.
+
+**What deliberately does not work:** anything outside Flow 1 — the Saved, Scheduled and Requests
+tabs, Messages, the inbox, the full walker list. Those screens were never designed, so tapping them
+says *"— not part of Flow 1"* rather than doing nothing. A dead control reads as a bug; one that
+names its own boundary reads as a decision.
 
 ## How it was verified
 
@@ -98,7 +104,7 @@ Two scripts, both against the running app:
   sticks, the picker writes back, the wizard reaches the summary, the sort changes, the heart
   toggles, the photo uploads and reaches the saved screen, and the booking screen carries both the
   chosen time and the entrance, apartment and floor, and that the dog picker holds exactly the dogs
-  that were saved. 37 checks, 0 console errors.
+  that were saved. **64 checks, 0 failures, 0 console errors.**
 
 Every screen was compared against its Figma frame in a render, not by reading the code.
 
@@ -107,3 +113,20 @@ Every screen was compared against its Figma frame in a render, not by reading th
 - **Payment.** It is set once in settings, not at booking time — the same decision the flow makes.
 - **Real data.** The walkers are fixtures; the point is the flow, not a back end.
 - **Flow 2 and Concept 2.** This is Flow 1 of Concept 1 only.
+
+---
+
+## Scope
+
+This prototype covers the **wireframes** and stays there. The designed UI screens live in Figma as
+static deliverables and are deliberately not implemented here — the two surfaces answer different
+questions, and keeping them in step would mean maintaining the same screen twice.
+
+## Deploying
+
+The published site is the `docs/` folder on `main`, served by GitHub Pages:
+
+```bash
+npx vite build --base=./ --outDir docs
+git add docs && git commit && git push
+```

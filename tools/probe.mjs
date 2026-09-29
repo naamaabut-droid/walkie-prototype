@@ -101,7 +101,7 @@ await page.waitForTimeout(500)
 const nameInput = page.locator('input[type="text"], input:not([type])').first()
 check(
   'Dog name shows a placeholder',
-  (await nameInput.getAttribute('placeholder')) === 'What is your dogs name?',
+  (await nameInput.getAttribute('placeholder')) === 'What is your dog’s name?',
 )
 
 // a 2x2 png, enough to prove the preview renders what was chosen
